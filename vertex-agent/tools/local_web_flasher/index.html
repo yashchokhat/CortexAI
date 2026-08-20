@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex-Agent Local Web Flasher</title>
+    <style>
+        body { font-family: -apple-system, system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        h1 { color: #333; }
+        .file-group { margin-bottom: 1rem; padding: 1rem; background: #f5f5f5; border-radius: 8px; }
+        .file-group label { display: block; font-weight: bold; margin-bottom: 0.5rem; }
+        button { background: #0366d6; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 6px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #log { background: #1e1e1e; color: #00ff00; padding: 1rem; border-radius: 8px; height: 300px; overflow-y: auto; font-family: monospace; white-space: pre-wrap; margin-top: 1rem; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Vertex-Agent Local Flasher</h1>
+    <p>Select your compiled `.bin` files from <code>application/edge_agent/build/</code> and flash them directly to your ESP32 over USB.</p>
+
+    <div class="file-group">
+        <label>1. Bootloader (Address: 0x0)</label>
+        <input type="file" id="bootloader" accept=".bin">
+        <small><br>Expected path: <code>build/bootloader/bootloader.bin</code></small>
+    </div>
+
+    <div class="file-group">
+        <label>2. Partition Table (Address: 0x8000)</label>
+        <input type="file" id="partition" accept=".bin">
+        <small><br>Expected path: <code>build/partition_table/partition-table.bin</code></small>
+    </div>
+
+    <div class="file-group">
+        <label>3. Firmware / App (Address: 0x10000)</label>
+        <input type="file" id="firmware" accept=".bin">
+        <small><br>Expected path: <code>build/vertex-agent.bin</code></small>
+    </div>
+
+    <button id="flashBtn">🔌 Connect and Flash</button>
+
+    <div id="log">Awaiting connection...</div>
+
+    <!-- Import esptool-js -->
+    <script type="module">
+        // Use a bundled esptool-js from UNPKG
+        import { ESPLoader, Transport } from "https://unpkg.com/esptool-js@0.5.4/bundle.js";
+
+        const flashBtn = document.getElementById('flashBtn');
+        const logEl = document.getElementById('log');
+
+        function logMsg(msg) {
+            logEl.textContent += msg + '\n';
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        const readFile = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        });
+
+        flashBtn.onclick = async () => {
+            const bootFile = document.getElementById('bootloader').files[0];
+            const partFile = document.getElementById('partition').files[0];
+            const fwFile = document.getElementById('firmware').files[0];
+
+            if (!bootFile || !partFile || !fwFile) {
+                alert('Please select all three .bin files before flashing.');
+                return;
+            }
+
+            if (!navigator.serial) {
+                alert('Web Serial API not supported in this browser. Please use Chrome or Edge and ensure you are accessing via localhost or HTTPS.');
+                return;
+            }
+
+            try {
+                const port = await navigator.serial.requestPort();
+                const transport = new Transport(port, true);
+                
+                const espLoader = new ESPLoader({
+                    transport,
+                    baudrate: 460800,
+                    terminal: {
+                        clean: () => { logEl.textContent = ''; },
+                        writeLine: (data) => logMsg(data)
+                    }
+                });
+
+                logMsg("Connecting to ESP32...");
+                await espLoader.main();
+                await espLoader.flashId();
+
+                const bootloaderData = await readFile(bootFile);
+                const partitionData = await readFile(partFile);
+                const appData = await readFile(fwFile);
+
+                const fileArray = [
+                    { data: bootloaderData, address: 0x0 },
+                    { data: partitionData, address: 0x8000 },
+                    { data: appData, address: 0x10000 }
+                ];
+
+                logMsg("\nStarting flash process...");
+                await espLoader.writeFlash({
+                    fileArray,
+                    flashSize: "keep",
+                    flashMode: "keep",
+                    flashFreq: "keep",
+                    eraseAll: false,
+                    compress: true,
+                    reportProgress: (fileIndex, written, total) => {
+                        const percent = Math.round((written / total) * 100);
+                        logMsg(`Flashing file ${fileIndex + 1}/3... ${percent}%`);
+                    }
+                });
+
+                logMsg("\n✅ Flash complete! Resetting device...");
+                await espLoader.hardReset();
+                transport.disconnect();
+                
+            } catch (error) {
+                logMsg("\n❌ Error: " + error.message);
+                console.error(error);
+            }
+        };
+    </script>
+</body>
+</html>

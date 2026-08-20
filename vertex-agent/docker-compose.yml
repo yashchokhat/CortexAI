@@ -1,0 +1,13 @@
+services:
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Privilege and device mapping for USB flashing support (if flashing from inside the container)
+    privileged: true
+    # Mapping /dev allows the container to see USB serial devices (e.g., /dev/ttyUSB0 or /dev/ttyACM0)
+    volumes:
+      - .:/workspace
+      - /dev:/dev
+    stdin_open: true
+    tty: true
