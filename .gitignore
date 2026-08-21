@@ -1,0 +1,6 @@
+# Build artifacts
+vertex-agent/**/build/
+cortexai_app/build/
+
+# OS files
+.DS_Store

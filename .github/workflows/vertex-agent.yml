@@ -1,0 +1,40 @@
+name: Vertex Agent CI
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "vertex-agent/**"
+      - ".github/workflows/vertex-agent.yml"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "vertex-agent/**"
+      - ".github/workflows/vertex-agent.yml"
+
+jobs:
+  build:
+    name: Build edge_agent (ESP-IDF ${{ matrix.idf_ver }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        idf_ver:
+          - v5.3
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build edge_agent with ESP-IDF
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: ${{ matrix.idf_ver }}
+          target: esp32s3
+          path: vertex-agent/application/edge_agent
+          command: |
+            idf.py bmgr -c ./boards -b anyboard && idf.py build

@@ -1,0 +1,17 @@
+# PR auto-labeling rules — labels are applied based on changed file paths.
+
+flutter:
+  - changed-files:
+      - any-glob-to-any-file: "cortexai_app/**"
+
+vertex-agent:
+  - changed-files:
+      - any-glob-to-any-file: "vertex-agent/**"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: "**/*.md"
