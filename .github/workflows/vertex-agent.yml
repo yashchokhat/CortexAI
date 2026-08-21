@@ -17,10 +17,10 @@ on:
 
 jobs:
   build:
-    name: Build edge_agent (ESP-IDF v5.3)
+    name: Build edge_agent (ESP-IDF v5.5)
     runs-on: ubuntu-latest
     container:
-      image: espressif/idf:release-v5.3
+      image: espressif/idf:release-v5.5
 
     steps:
       - name: Checkout repository
