@@ -17,24 +17,21 @@ on:
 
 jobs:
   build:
-    name: Build edge_agent (ESP-IDF ${{ matrix.idf_ver }})
+    name: Build edge_agent (ESP-IDF v5.3)
     runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-      matrix:
-        idf_ver:
-          - v5.3
+    container:
+      image: espressif/idf:release-v5.3
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build edge_agent with ESP-IDF
-        uses: espressif/esp-idf-ci-action@v1
-        with:
-          esp_idf_version: ${{ matrix.idf_ver }}
-          target: esp32s3
-          path: vertex-agent/application/edge_agent
-          command: |
-            idf.py bmgr -c ./boards -b anyboard && idf.py build
+      - name: Build firmware
+        working-directory: vertex-agent/application/edge_agent
+        shell: bash
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          . /opt/esp/idf/export.sh
+          pip install --no-cache-dir esp-bmgr-assist || pip install --break-system-packages --no-cache-dir esp-bmgr-assist
+          idf.py bmgr -c ./boards -b anyboard
+          idf.py build
