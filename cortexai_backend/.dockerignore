@@ -1,0 +1,6 @@
+.git
+.gitignore
+*.md
+main_test.go
+cortexai_backend
+.DS_Store

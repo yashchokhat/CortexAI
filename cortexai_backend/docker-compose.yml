@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  cortexai_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cortexai_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - GIN_MODE=release
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
