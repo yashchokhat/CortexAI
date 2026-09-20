@@ -5,6 +5,8 @@ import 'auth_page.dart';
 import 'services/api_service.dart';
 import 'services/auth_service.dart';
 import 'vertex_ai_page.dart';
+import 'template_action_page.dart';
+import 'widgets/glass_template_card.dart';
 
 /// Delicate white dot pattern painter for Vertex Agent card background
 class WhiteDotPatternPainter extends CustomPainter {
@@ -45,6 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Template> _templates = [];
   bool _isLoadingTemplates = true;
+  bool _isGridTemplateView = false; // defaults to horizontal deck matching reference image
 
   @override
   void initState() {
@@ -502,44 +505,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Top badge
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0x18FFFFFF),
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: const Color(0x2AFFFFFF)),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(CupertinoIcons.circle_fill, size: 6, color: Color(0xFF34C759)),
-                            SizedBox(width: 6),
-                            Text(
-                              'VERTEX AGENT',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.8,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Text(
-                        'Ready',
-                        style: TextStyle(
-                          color: Color(0x88FFFFFF),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                  // Removed redundant top badge
 
                   const SizedBox(height: 16),
 
@@ -604,49 +570,67 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// Vertical Templates Section with 2-Column Square Cards
+  void _openTemplateAction(Template tpl, int index) {
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 500),
+        reverseTransitionDuration: const Duration(milliseconds: 500),
+        pageBuilder: (context, animation, secondaryAnimation) => TemplateActionPage(template: tpl, index: index),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
+
+  /// Templates Section featuring the reference 3D Frosted Glass Cards
   Widget _buildTemplatesSection() {
     return Column(
       key: _templatesKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section title row
+        // Section title row with clean view toggle
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Templates',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.2,
-              ),
-            ),
-            if (!_isLoadingTemplates && _templates.isNotEmpty)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0x18FFFFFF),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  '${_templates.length} ACTIVE',
-                  style: const TextStyle(
-                    color: Color(0xCCFFFFFF),
-                    fontSize: 10,
+            Row(
+              children: [
+                const Text(
+                  'Templates',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
+                    letterSpacing: -0.2,
                   ),
                 ),
-              ),
+                const SizedBox(width: 8),
+                if (!_isLoadingTemplates && _templates.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                    decoration: BoxDecoration(
+                      color: const Color(0x18FFFFFF),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${_templates.length} READY',
+                      style: const TextStyle(
+                        color: Color(0xCCFFFFFF),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
 
         const SizedBox(height: 4),
 
         const Text(
-          'Instant edge routines fetched live from cluster.',
+          'Instant edge routines • 1-tap deployment',
           style: TextStyle(
             color: Color(0x77FFFFFF),
             fontSize: 12.5,
@@ -654,7 +638,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
 
-        const SizedBox(height: 14),
+        const SizedBox(height: 16),
 
         if (_isLoadingTemplates)
           const Padding(
@@ -664,160 +648,37 @@ class _HomePageState extends State<HomePage> {
             ),
           )
         else
+          // Grid Mode: 2-Column Vertical Grid of Glass Cards
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _templates.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 1.0, // Clean square cards
+              crossAxisSpacing: 14,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.0, // Square cards
             ),
             itemBuilder: (context, index) {
               final tpl = _templates[index];
-              return _buildSquareTemplateCard(tpl, index);
+              return Hero(
+                tag: 'template_card_${tpl.id}',
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: GlassTemplateCard(
+                    template: tpl,
+                    index: index,
+                    onTap: () => _openTemplateAction(tpl, index),
+                  ),
+                ),
+              )
+                  .animate()
+                  .fadeIn(duration: 300.ms, delay: (index * 35).ms)
+                  .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic);
             },
           ),
       ],
     );
-  }
-
-  /// Square Card Widget for Template
-  Widget _buildSquareTemplateCard(Template tpl, int index) {
-    final iconData = _getIconForTemplate(tpl.icon);
-
-    return GestureDetector(
-      onTap: () => _openAgentConsole(tpl.actionPrompt),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F0F12),
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: const Color(0x22FFFFFF),
-            width: 0.8,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Top row: Icon in subtle frosted pill + category chip
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: const Color(0x18007AFF), // subtle blue tint
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: const Color(0x33007AFF),
-                      width: 0.8,
-                    ),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      iconData,
-                      size: 17,
-                      color: const Color(0xFF80D8FF),
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
-                  decoration: BoxDecoration(
-                    color: const Color(0x14FFFFFF),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    tpl.chip,
-                    style: const TextStyle(
-                      color: Color(0xAAFFFFFF),
-                      fontSize: 9.5,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            // Middle: Title & brief description
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  tpl.title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.2,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  tpl.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color(0x77FFFFFF),
-                    fontSize: 10.5,
-                    height: 1.3,
-                  ),
-                ),
-              ],
-            ),
-
-            // Bottom action link
-            const Row(
-              children: [
-                Text(
-                  'Run routine',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(width: 4),
-                Icon(CupertinoIcons.chevron_right, size: 10, color: Colors.white70),
-              ],
-            ),
-          ],
-        ),
-      ),
-    )
-        .animate()
-        .fadeIn(duration: 300.ms, delay: (index * 40).ms)
-        .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic);
-  }
-
-  IconData _getIconForTemplate(String icon) {
-    switch (icon) {
-      case 'weather':
-        return CupertinoIcons.cloud_sun_fill;
-      case 'score':
-        return CupertinoIcons.sportscourt_fill;
-      case 'lightbulb_on':
-        return CupertinoIcons.lightbulb_fill;
-      case 'thermo':
-        return CupertinoIcons.thermometer;
-      case 'lightbulb_off':
-        return CupertinoIcons.lightbulb;
-      case 'bell':
-        return CupertinoIcons.bell_fill;
-      case 'gauge':
-        return CupertinoIcons.gauge;
-      case 'alert':
-        return CupertinoIcons.exclamationmark_shield_fill;
-      default:
-        return CupertinoIcons.circle_grid_hex_fill;
-    }
   }
 
   /// Minimal Side Drawer in pure White & Black

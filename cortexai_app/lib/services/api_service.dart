@@ -241,15 +241,6 @@ class ApiService {
         category: 'Feed',
       ),
       Template(
-        id: 'tpl-on-led',
-        title: 'On LED',
-        chip: 'GPIO Out',
-        description: 'Energize onboard diagnostic LED and optical beacon.',
-        icon: 'lightbulb_on',
-        actionPrompt: 'Send HIGH logic pulse to GPIO 2 status LED.',
-        category: 'Hardware',
-      ),
-      Template(
         id: 'tpl-temp-hum',
         title: 'Fetch Temp & Humidity',
         chip: 'I2C Sensor',
@@ -257,6 +248,15 @@ class ApiService {
         icon: 'thermo',
         actionPrompt: 'Query I2C bus 0x70 for real-time temperature and humidity.',
         category: 'Sensors',
+      ),
+      Template(
+        id: 'tpl-on-led',
+        title: 'On LED',
+        chip: 'GPIO Out',
+        description: 'Energize onboard diagnostic LED and optical beacon.',
+        icon: 'lightbulb_on',
+        actionPrompt: 'Send HIGH logic pulse to GPIO 2 status LED.',
+        category: 'Hardware',
       ),
       Template(
         id: 'tpl-off-led',

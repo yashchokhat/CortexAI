@@ -95,15 +95,6 @@ var mockTemplates = []Template{
 		Category:     "Feed",
 	},
 	{
-		ID:           "tpl-on-led",
-		Title:        "On LED",
-		Chip:         "GPIO Out",
-		Description:  "Energize onboard optical indicator and visual alert array.",
-		Icon:         "lightbulb_on",
-		ActionPrompt: "Send HIGH logic pulse to GPIO 2 status LED.",
-		Category:     "Hardware",
-	},
-	{
 		ID:           "tpl-temp-hum",
 		Title:        "Fetch Temp & Humidity",
 		Chip:         "I2C Sensor",
@@ -111,6 +102,15 @@ var mockTemplates = []Template{
 		Icon:         "thermo",
 		ActionPrompt: "Query I2C bus 0x70 for real-time temperature and humidity.",
 		Category:     "Sensors",
+	},
+	{
+		ID:           "tpl-on-led",
+		Title:        "On LED",
+		Chip:         "GPIO Out",
+		Description:  "Energize onboard optical indicator and visual alert array.",
+		Icon:         "lightbulb_on",
+		ActionPrompt: "Send HIGH logic pulse to GPIO 2 status LED.",
+		Category:     "Hardware",
 	},
 	{
 		ID:           "tpl-off-led",
