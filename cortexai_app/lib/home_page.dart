@@ -7,6 +7,11 @@ import 'services/auth_service.dart';
 import 'vertex_ai_page.dart';
 import 'template_action_page.dart';
 import 'widgets/glass_template_card.dart';
+import 'espclaw/screens/device_discovery_page.dart';
+import 'espclaw/screens/esp_dashboard_page.dart';
+import 'espclaw/screens/esp_chat_page.dart';
+import 'espclaw/screens/esp_config_page.dart';
+import 'espclaw/services/connection_manager.dart';
 
 /// Delicate white dot pattern painter for Vertex Agent card background
 class WhiteDotPatternPainter extends CustomPainter {
@@ -368,6 +373,11 @@ class _HomePageState extends State<HomePage> {
                         _buildVertexAgentSection(),
 
                         const SizedBox(height: 28),
+                        
+                        // ESP-Claw Local Device Control Section
+                        _buildEspClawSection(),
+
+                        const SizedBox(height: 28),
 
                         // Vertical Templates Grid with API-backed Square Cards
                         _buildTemplatesSection(),
@@ -567,6 +577,99 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildEspClawSection() {
+    return StreamBuilder<bool>(
+      stream: ConnectionManager.instance.isConnected,
+      initialData: ConnectionManager.instance.selectedDevice != null,
+      builder: (context, snapshot) {
+        final isConnected = snapshot.data ?? false;
+        final device = ConnectionManager.instance.selectedDevice;
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              CupertinoPageRoute(builder: (_) => isConnected ? const EspDashboardPage() : const DeviceDiscoveryPage()),
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF0C0C0E),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: const Color(0x28FFFFFF)),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(24),
+              child: Stack(
+                children: [
+                  CustomPaint(
+                    size: const Size(double.infinity, 100),
+                    painter: const WhiteDotPatternPainter(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1C1C1E),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: const Color(0x33FFFFFF)),
+                          ),
+                          child: const Icon(CupertinoIcons.device_laptop, color: Colors.white, size: 24),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text(
+                                    'ESP-Claw',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  if (isConnected)
+                                    Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF34C759),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                isConnected ? 'Connected to ${device?.name ?? "Device"}' : 'Local Device Control & Hardware',
+                                style: TextStyle(
+                                  color: isConnected ? const Color(0xFF34C759) : const Color(0x99FFFFFF),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(CupertinoIcons.chevron_right, color: Color(0x55FFFFFF)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ).animate().fadeIn(duration: 400.ms, delay: 100.ms).slideY(begin: 0.05);
+      }
     );
   }
 
@@ -786,39 +889,65 @@ class _HomePageState extends State<HomePage> {
                         );
                       },
                     ),
-                    _buildDrawerItem(
-                      icon: CupertinoIcons.circle_grid_hex_fill,
-                      title: 'Vertex Agent',
-                      badge: 'CONSOLE',
-                      onTap: () {
-                        Navigator.of(context).maybePop();
-                        _openAgentConsole();
-                      },
-                    ),
-                    _buildDrawerItem(
-                      icon: CupertinoIcons.square_grid_2x2_fill,
-                      title: 'Templates',
-                      badge: '${_templates.length}',
-                      onTap: () => _scrollToKey(_templatesKey),
+                    const SizedBox(height: 16),
+                    _buildDrawerSectionTitle('VERTEX AGENT (ESP-CLAW)'),
+                    StreamBuilder<bool>(
+                      stream: ConnectionManager.instance.isConnected,
+                      initialData: ConnectionManager.instance.selectedDevice != null,
+                      builder: (context, snapshot) {
+                        final connected = snapshot.data ?? false;
+                        if (!connected) {
+                          return _buildDrawerItem(
+                            icon: CupertinoIcons.search,
+                            title: 'Discover & Connect',
+                            badge: 'SCAN',
+                            onTap: () {
+                              Navigator.of(context).maybePop();
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(builder: (_) => const DeviceDiscoveryPage()),
+                              );
+                            },
+                          );
+                        }
+                        
+                        return Column(
+                          children: [
+                            _buildDrawerItem(
+                              icon: CupertinoIcons.chat_bubble_2_fill,
+                              title: 'Agent Chat',
+                              badge: 'ONLINE',
+                              onTap: () {
+                                Navigator.of(context).maybePop();
+                                Navigator.of(context).push(CupertinoPageRoute(builder: (_) => const EspChatPage()));
+                              },
+                            ),
+                            _buildDrawerItem(
+                              icon: CupertinoIcons.device_laptop,
+                              title: 'Dashboard Overview',
+                              onTap: () {
+                                Navigator.of(context).maybePop();
+                                Navigator.of(context).push(CupertinoPageRoute(builder: (_) => const EspDashboardPage()));
+                              },
+                            ),
+                            _buildDrawerItem(
+                              icon: CupertinoIcons.gear_alt_fill,
+                              title: 'Configuration',
+                              onTap: () {
+                                Navigator.of(context).maybePop();
+                                Navigator.of(context).push(CupertinoPageRoute(builder: (_) => const EspConfigPage()));
+                              },
+                            ),
+                          ],
+                        );
+                      }
                     ),
 
                     const SizedBox(height: 16),
-                    _buildDrawerSectionTitle('PREFERENCES'),
+                    _buildDrawerSectionTitle('ACCOUNT'),
                     _buildDrawerItem(
                       icon: CupertinoIcons.person_crop_circle,
                       title: 'Account Profile',
                       onTap: _showAccountDialog,
-                    ),
-                    _buildDrawerItem(
-                      icon: CupertinoIcons.gear_alt_fill,
-                      title: 'System Settings',
-                      onTap: _showSettingsDialog,
-                    ),
-                    _buildDrawerItem(
-                      icon: CupertinoIcons.antenna_radiowaves_left_right,
-                      title: 'Connected Devices',
-                      badge: 'GO API',
-                      onTap: _showConnectedDevicesSheet,
                     ),
                     _buildDrawerItem(
                       icon: CupertinoIcons.book_fill,
