@@ -3,11 +3,7 @@ class Capability {
   final String group;
   final bool enabled;
 
-  Capability({
-    required this.name,
-    required this.group,
-    required this.enabled,
-  });
+  Capability({required this.name, required this.group, required this.enabled});
 
   factory Capability.fromJson(Map<String, dynamic> json) {
     return Capability(
@@ -18,6 +14,8 @@ class Capability {
   }
 
   static List<Capability> listFromJson(List<dynamic> jsonList) {
-    return jsonList.map((json) => Capability.fromJson(json as Map<String, dynamic>)).toList();
+    return jsonList
+        .map((json) => Capability.fromJson(json as Map<String, dynamic>))
+        .toList();
   }
 }

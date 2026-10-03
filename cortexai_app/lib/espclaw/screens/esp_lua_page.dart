@@ -28,8 +28,18 @@ class _EspLuaPageState extends State<EspLuaPage> {
     try {
       await Future.delayed(const Duration(milliseconds: 800));
       _modules = [
-        {'name': 'sensor_monitor', 'description': 'Reads environment sensors', 'version': '1.0.2', 'enabled': true},
-        {'name': 'led_control', 'description': 'Controls RGB strip', 'version': '0.9.1', 'enabled': false},
+        {
+          'name': 'sensor_monitor',
+          'description': 'Reads environment sensors',
+          'version': '1.0.2',
+          'enabled': true,
+        },
+        {
+          'name': 'led_control',
+          'description': 'Controls RGB strip',
+          'version': '0.9.1',
+          'enabled': false,
+        },
       ];
     } catch (e) {
       _errorMessage = e.toString();
@@ -51,7 +61,10 @@ class _EspLuaPageState extends State<EspLuaPage> {
               controller: controller,
               maxLines: 5,
               placeholder: 'print("Hello World")',
-              style: const TextStyle(color: Colors.white, fontFamily: 'Courier'),
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'Courier',
+              ),
               decoration: BoxDecoration(
                 color: const Color(0xFF141416),
                 borderRadius: BorderRadius.circular(8),
@@ -59,12 +72,18 @@ class _EspLuaPageState extends State<EspLuaPage> {
             ),
           ),
           actions: [
-            CupertinoDialogAction(child: const Text('Cancel'), onPressed: () => Navigator.pop(context)),
+            CupertinoDialogAction(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop(context),
+            ),
             CupertinoDialogAction(
               child: const Text('Run'),
               onPressed: () {
                 Navigator.pop(context);
-                setState(() => _output += '\n> ${controller.text}\nExecuted successfully.');
+                setState(
+                  () => _output +=
+                      '\n> ${controller.text}\nExecuted successfully.',
+                );
               },
             ),
           ],
@@ -75,24 +94,39 @@ class _EspLuaPageState extends State<EspLuaPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    return Scaffold(
       backgroundColor: const Color(0xFF000000),
-      navigationBar: CupertinoNavigationBar(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
         backgroundColor: Colors.transparent,
-        border: null,
+
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(CupertinoIcons.back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        middle: const Text('Lua Modules', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600, fontFamily: '.SF Pro Text')),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: _runScript,
-          child: const Icon(CupertinoIcons.play_circle_fill, color: Colors.white),
+        title: const Text(
+          'Lua Modules',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            fontFamily: '.SF Pro Text',
+          ),
         ),
+        actions: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: _runScript,
+            child: const Icon(
+              CupertinoIcons.play_circle_fill,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
-      child: SafeArea(
+      body: SafeArea(
         child: Column(
           children: [
             Expanded(
@@ -105,45 +139,79 @@ class _EspLuaPageState extends State<EspLuaPage> {
                       itemBuilder: (context, index) {
                         final mod = _modules[index];
                         return ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                            child: Container(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF0C0C0E),
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: const Color(0x28FFFFFF)),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(CupertinoIcons.cube_box, color: Colors.white, size: 28),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(mod['name'], style: const TextStyle(color: Colors.white, fontSize: 16, fontFamily: '.SF Pro Text')),
-                                        const SizedBox(height: 4),
-                                        Text(mod['description'], style: const TextStyle(color: Color(0x99FFFFFF), fontSize: 13, fontFamily: '.SF Pro Text')),
-                                        const SizedBox(height: 4),
-                                        Text('v${mod['version']}', style: const TextStyle(color: Color(0x99FFFFFF), fontSize: 11, fontFamily: '.SF Pro Text')),
-                                      ],
+                              borderRadius: BorderRadius.circular(16),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 18,
+                                  sigmaY: 18,
+                                ),
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF0C0C0E),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: const Color(0x28FFFFFF),
                                     ),
                                   ),
-                                  CupertinoSwitch(
-                                    value: mod['enabled'],
-                                    onChanged: (val) {
-                                      setState(() => mod['enabled'] = val);
-                                    },
-                                    activeColor: CupertinoColors.activeBlue,
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        CupertinoIcons.cube_box,
+                                        color: Colors.white,
+                                        size: 28,
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              mod['name'],
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontFamily: '.SF Pro Text',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              mod['description'],
+                                              style: const TextStyle(
+                                                color: Color(0x99FFFFFF),
+                                                fontSize: 13,
+                                                fontFamily: '.SF Pro Text',
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'v${mod['version']}',
+                                              style: const TextStyle(
+                                                color: Color(0x99FFFFFF),
+                                                fontSize: 11,
+                                                fontFamily: '.SF Pro Text',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      CupertinoSwitch(
+                                        value: mod['enabled'],
+                                        onChanged: (val) {
+                                          setState(() => mod['enabled'] = val);
+                                        },
+                                        activeColor: CupertinoColors.activeBlue,
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ).animate().fadeIn(duration: 300.ms, delay: (50 * index).ms).slideY(begin: 0.05);
+                            )
+                            .animate()
+                            .fadeIn(duration: 300.ms, delay: (50 * index).ms)
+                            .slideY(begin: 0.05);
                       },
                     ),
             ),
@@ -160,13 +228,24 @@ class _EspLuaPageState extends State<EspLuaPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Output Console', style: TextStyle(color: Color(0x99FFFFFF), fontSize: 13, fontFamily: '.SF Pro Text')),
+                  const Text(
+                    'Output Console',
+                    style: TextStyle(
+                      color: Color(0x99FFFFFF),
+                      fontSize: 13,
+                      fontFamily: '.SF Pro Text',
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Text(
                         _output.isEmpty ? 'Waiting for output...' : _output,
-                        style: const TextStyle(color: Colors.white, fontSize: 12, fontFamily: 'Courier'),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontFamily: 'Courier',
+                        ),
                       ),
                     ),
                   ),

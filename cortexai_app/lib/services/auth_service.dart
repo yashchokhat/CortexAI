@@ -21,7 +21,8 @@ class AuthUser {
     return AuthUser(
       uid: user.uid,
       email: user.email,
-      displayName: user.displayName ?? (user.email?.split('@').first ?? 'Developer'),
+      displayName:
+          user.displayName ?? (user.email?.split('@').first ?? 'Developer'),
       photoUrl: user.photoURL,
     );
   }
@@ -30,7 +31,11 @@ class AuthUser {
 /// Abstract authentication interface.
 abstract class BaseAuthService {
   Future<AuthUser?> signInWithEmail(String email, String password);
-  Future<AuthUser?> registerWithEmail(String name, String email, String password);
+  Future<AuthUser?> registerWithEmail(
+    String name,
+    String email,
+    String password,
+  );
   Future<AuthUser?> signInWithGoogle();
   Future<AuthUser?> signInWithApple();
   Future<void> signOut();
@@ -60,16 +65,20 @@ class AuthService implements BaseAuthService {
     try {
       final auth = fb.FirebaseAuth.instance;
       _firebaseReady = true;
-      auth.authStateChanges().listen((fb.User? user) {
-        if (user != null) {
-          _currentUser = AuthUser.fromFirebase(user);
-        } else if (_currentUser != null && _currentUser!.uid.startsWith('firebase_')) {
-          _currentUser = null;
-        }
-        _controller.add(_currentUser);
-      }, onError: (err) {
-        debugPrint('Firebase authStateChanges notice: $err');
-      });
+      auth.authStateChanges().listen(
+        (fb.User? user) {
+          if (user != null) {
+            _currentUser = AuthUser.fromFirebase(user);
+          } else if (_currentUser != null &&
+              _currentUser!.uid.startsWith('firebase_')) {
+            _currentUser = null;
+          }
+          _controller.add(_currentUser);
+        },
+        onError: (err) {
+          debugPrint('Firebase authStateChanges notice: $err');
+        },
+      );
     } catch (e) {
       _firebaseReady = false;
       debugPrint('Firebase running in demo/offline mode: $e');
@@ -83,10 +92,11 @@ class AuthService implements BaseAuthService {
   Future<AuthUser?> signInWithEmail(String email, String password) async {
     if (_firebaseReady) {
       try {
-        final credential = await fb.FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: email.trim(),
-          password: password,
-        );
+        final credential = await fb.FirebaseAuth.instance
+            .signInWithEmailAndPassword(
+              email: email.trim(),
+              password: password,
+            );
         if (credential.user != null) {
           _currentUser = AuthUser.fromFirebase(credential.user!);
           _controller.add(_currentUser);
@@ -112,17 +122,23 @@ class AuthService implements BaseAuthService {
   }
 
   @override
-  Future<AuthUser?> registerWithEmail(String name, String email, String password) async {
+  Future<AuthUser?> registerWithEmail(
+    String name,
+    String email,
+    String password,
+  ) async {
     if (_firebaseReady) {
       try {
-        final credential = await fb.FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: email.trim(),
-          password: password,
-        );
+        final credential = await fb.FirebaseAuth.instance
+            .createUserWithEmailAndPassword(
+              email: email.trim(),
+              password: password,
+            );
         if (credential.user != null) {
           await credential.user!.updateDisplayName(name);
           await credential.user!.reload();
-          final updated = fb.FirebaseAuth.instance.currentUser ?? credential.user!;
+          final updated =
+              fb.FirebaseAuth.instance.currentUser ?? credential.user!;
           _currentUser = AuthUser.fromFirebase(updated);
           _controller.add(_currentUser);
           return _currentUser;
@@ -152,7 +168,9 @@ class AuthService implements BaseAuthService {
       try {
         if (kIsWeb) {
           final googleProvider = fb.GoogleAuthProvider();
-          final credential = await fb.FirebaseAuth.instance.signInWithPopup(googleProvider);
+          final credential = await fb.FirebaseAuth.instance.signInWithPopup(
+            googleProvider,
+          );
           if (credential.user != null) {
             _currentUser = AuthUser.fromFirebase(credential.user!);
             _controller.add(_currentUser);
@@ -164,7 +182,9 @@ class AuthService implements BaseAuthService {
           final credential = fb.GoogleAuthProvider.credential(
             idToken: googleAuth.idToken,
           );
-          final userCred = await fb.FirebaseAuth.instance.signInWithCredential(credential);
+          final userCred = await fb.FirebaseAuth.instance.signInWithCredential(
+            credential,
+          );
           if (userCred.user != null) {
             _currentUser = AuthUser.fromFirebase(userCred.user!);
             _controller.add(_currentUser);

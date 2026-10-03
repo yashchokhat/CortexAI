@@ -1,0 +1,20 @@
+@@ -3,11 +3,15 @@
+ import 'package:flutter_animate/flutter_animate.dart';
+-import 'auth_page.dart';
+ import 'services/api_service.dart';
+-import 'services/auth_service.dart';
+-import 'vertex_ai_page.dart';
+ import 'template_action_page.dart';
+ import 'widgets/glass_template_card.dart';
+ import 'espclaw/screens/device_discovery_page.dart';
+-import 'espclaw/screens/esp_dashboard_page.dart';
+ import 'espclaw/screens/esp_chat_page.dart';
+ import 'espclaw/screens/esp_config_page.dart';
++import 'espclaw/screens/esp_status_page.dart';
++import 'espclaw/screens/esp_capabilities_page.dart';
++import 'espclaw/screens/esp_files_page.dart';
++import 'espclaw/screens/esp_lua_page.dart';
++import 'espclaw/screens/esp_skills_page.dart';
++import 'espclaw/screens/esp_memory_page.dart';
++import 'espclaw/screens/esp_mcp_page.dart';
++import 'espclaw/screens/esp_scheduler_page.dart';

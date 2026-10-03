@@ -120,9 +120,7 @@ class _CupertinoAuthFieldState extends State<CupertinoAuthField> {
                     _obscureText
                         ? CupertinoIcons.eye_slash
                         : CupertinoIcons.eye,
-                    color: _isFocused
-                        ? Colors.white
-                        : const Color(0x99FFFFFF),
+                    color: _isFocused ? Colors.white : const Color(0x99FFFFFF),
                     size: 20,
                   ),
                 ),

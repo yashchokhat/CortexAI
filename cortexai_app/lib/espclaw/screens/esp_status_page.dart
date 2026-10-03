@@ -59,7 +59,12 @@ class _EspStatusPageState extends State<EspStatusPage> {
           ),
           title: const Text(
             'System Status',
-            style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600, fontFamily: '.SF Pro Text'),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              fontFamily: '.SF Pro Text',
+            ),
           ),
         ),
         body: RefreshIndicator(
@@ -69,61 +74,102 @@ class _EspStatusPageState extends State<EspStatusPage> {
           child: _isLoading && _statusData == null
               ? const Center(child: CupertinoActivityIndicator(radius: 16))
               : _statusData == null
-                  ? ListView(
-                      children: const [
-                        SizedBox(height: 100),
-                        Center(child: Text('Failed to load status', style: TextStyle(color: Colors.white))),
-                      ],
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.all(16),
+              ? ListView(
+                  children: const [
+                    SizedBox(height: 100),
+                    Center(
+                      child: Text(
+                        'Failed to load status',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                )
+              : ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    _buildStatusCard(
+                      title: 'Network',
+                      icon: CupertinoIcons.wifi,
                       children: [
-                        _buildStatusCard(
-                          title: 'Network',
-                          icon: CupertinoIcons.wifi,
-                          children: [
-                            _buildInfoRow('IP Address', _statusData!['ip']?.toString() ?? '0.0.0.0'),
-                            _buildInfoRow('Wi-Fi Mode', (_statusData!['wifi_mode']?.toString() ?? 'unknown').toUpperCase()),
-                            _buildInfoRow('Status', _statusData!['wifi_connected'] == true ? 'Connected' : 'Disconnected', valueColor: _statusData!['wifi_connected'] == true ? CupertinoColors.activeGreen : CupertinoColors.destructiveRed),
-                          ],
-                        ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05),
-                        const SizedBox(height: 16),
-                        _buildStatusCard(
+                        _buildInfoRow(
+                          'IP Address',
+                          _statusData!['ip']?.toString() ?? '0.0.0.0',
+                        ),
+                        _buildInfoRow(
+                          'Wi-Fi Mode',
+                          (_statusData!['wifi_mode']?.toString() ?? 'unknown')
+                              .toUpperCase(),
+                        ),
+                        _buildInfoRow(
+                          'Status',
+                          _statusData!['wifi_connected'] == true
+                              ? 'Connected'
+                              : 'Disconnected',
+                          valueColor: _statusData!['wifi_connected'] == true
+                              ? CupertinoColors.activeGreen
+                              : CupertinoColors.destructiveRed,
+                        ),
+                      ],
+                    ).animate().fadeIn(duration: 300.ms).slideY(begin: 0.05),
+                    const SizedBox(height: 16),
+                    _buildStatusCard(
                           title: 'Access Point',
                           icon: CupertinoIcons.antenna_radiowaves_left_right,
                           children: [
-                            _buildInfoRow('AP Active', _statusData!['ap_active'] == true ? 'Yes' : 'No', valueColor: _statusData!['ap_active'] == true ? CupertinoColors.activeGreen : Colors.white),
-                            _buildInfoRow('AP SSID', _statusData!['ap_ssid']?.toString() ?? 'N/A'),
-                            _buildInfoRow('AP IP Address', _statusData!['ap_ip']?.toString() ?? 'N/A'),
+                            _buildInfoRow(
+                              'AP Active',
+                              _statusData!['ap_active'] == true ? 'Yes' : 'No',
+                              valueColor: _statusData!['ap_active'] == true
+                                  ? CupertinoColors.activeGreen
+                                  : Colors.white,
+                            ),
+                            _buildInfoRow(
+                              'AP SSID',
+                              _statusData!['ap_ssid']?.toString() ?? 'N/A',
+                            ),
+                            _buildInfoRow(
+                              'AP IP Address',
+                              _statusData!['ap_ip']?.toString() ?? 'N/A',
+                            ),
                           ],
-                        ).animate().fadeIn(duration: 300.ms, delay: 100.ms).slideY(begin: 0.05),
-                        const SizedBox(height: 16),
-                        _buildStatusCard(
+                        )
+                        .animate()
+                        .fadeIn(duration: 300.ms, delay: 100.ms)
+                        .slideY(begin: 0.05),
+                    const SizedBox(height: 16),
+                    _buildStatusCard(
                           title: 'System',
                           icon: CupertinoIcons.device_laptop,
                           children: [
-                            _buildInfoRow('Storage Path', _statusData!['storage_base_path']?.toString() ?? '/fatfs'),
+                            _buildInfoRow(
+                              'Storage Path',
+                              _statusData!['storage_base_path']?.toString() ??
+                                  '/fatfs',
+                            ),
                           ],
-                        ).animate().fadeIn(duration: 300.ms, delay: 200.ms).slideY(begin: 0.05),
-                      ],
-                    ),
+                        )
+                        .animate()
+                        .fadeIn(duration: 300.ms, delay: 200.ms)
+                        .slideY(begin: 0.05),
+                  ],
+                ),
         ),
       ),
     );
   }
 
-  Widget _buildStatusCard({required String title, required IconData icon, required List<Widget> children}) {
+  Widget _buildStatusCard({
+    required String title,
+    required IconData icon,
+    required List<Widget> children,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF0C0C0E),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: const Color(0x28FFFFFF)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x10007AFF),
-            blurRadius: 20,
-          ),
-        ],
+        boxShadow: const [BoxShadow(color: Color(0x10007AFF), blurRadius: 20)],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
@@ -140,7 +186,11 @@ class _EspStatusPageState extends State<EspStatusPage> {
                     const SizedBox(width: 12),
                     Text(
                       title,
-                      style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -160,10 +210,17 @@ class _EspStatusPageState extends State<EspStatusPage> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Color(0x99FFFFFF), fontSize: 15)),
+          Text(
+            label,
+            style: const TextStyle(color: Color(0x99FFFFFF), fontSize: 15),
+          ),
           Text(
             value,
-            style: TextStyle(color: valueColor ?? Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              color: valueColor ?? Colors.white,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ],
       ),

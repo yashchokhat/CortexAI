@@ -26,7 +26,7 @@ class _TemplateActionPageState extends State<TemplateActionPage> {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     setState(() => _isUploading = false);
-    
+
     // Show success dialog
     showCupertinoDialog(
       context: context,
@@ -36,8 +36,14 @@ class _TemplateActionPageState extends State<TemplateActionPage> {
           primaryColor: Colors.white,
         ),
         child: CupertinoAlertDialog(
-          title: const Text('Upload Complete', style: TextStyle(color: Colors.white)),
-          content: const Text('Routine deployed to edge node successfully.', style: TextStyle(color: Color(0xCCFFFFFF))),
+          title: const Text(
+            'Upload Complete',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: const Text(
+            'Routine deployed to edge node successfully.',
+            style: TextStyle(color: Color(0xCCFFFFFF)),
+          ),
           actions: [
             CupertinoDialogAction(
               child: const Text('OK', style: TextStyle(color: Colors.white)),
@@ -86,7 +92,10 @@ class _TemplateActionPageState extends State<TemplateActionPage> {
           ),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 24.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -103,7 +112,7 @@ class _TemplateActionPageState extends State<TemplateActionPage> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                
+
                 // Details Section
                 const Text(
                   'Configuration',
@@ -135,9 +144,9 @@ class _TemplateActionPageState extends State<TemplateActionPage> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 40),
-                
+
                 // Upload Button
                 GestureDetector(
                   onTap: _isUploading ? null : _handleUpload,
@@ -156,11 +165,17 @@ class _TemplateActionPageState extends State<TemplateActionPage> {
                     ),
                     child: Center(
                       child: _isUploading
-                          ? const CupertinoActivityIndicator(color: Colors.black)
+                          ? const CupertinoActivityIndicator(
+                              color: Colors.black,
+                            )
                           : const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(CupertinoIcons.cloud_upload_fill, color: Colors.black, size: 20),
+                                Icon(
+                                  CupertinoIcons.cloud_upload_fill,
+                                  color: Colors.black,
+                                  size: 20,
+                                ),
                                 SizedBox(width: 8),
                                 Text(
                                   'Upload & Deploy',

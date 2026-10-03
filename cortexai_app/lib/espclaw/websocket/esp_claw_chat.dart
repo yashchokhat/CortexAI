@@ -7,9 +7,7 @@ class EspClawChat {
   WebSocketChannel? _channel;
   Timer? _heartbeatTimer;
 
-  EspClawChat({
-    required this.ip,
-  });
+  EspClawChat({required this.ip});
 
   bool get isConnected {
     return _channel != null;
@@ -23,10 +21,10 @@ class EspClawChat {
     final url = 'ws://$ip/ws/webim';
 
     _channel = WebSocketChannel.connect(Uri.parse(url));
-    
+
     // Send hello message to match vertex-agent frontend
     _channel!.sink.add(jsonEncode({'type': 'hello', 'chat_id': 'default'}));
-    
+
     // Heartbeat ping every 2 seconds
     _heartbeatTimer?.cancel();
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 2), (timer) {

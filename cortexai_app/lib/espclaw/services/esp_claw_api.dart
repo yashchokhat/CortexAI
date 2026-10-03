@@ -20,11 +20,17 @@ class EspClawApi {
     return await _get('/api/config');
   }
 
-  Future<Map<String, dynamic>> postConfig(Map<String, dynamic> body, {String? path}) async {
+  Future<Map<String, dynamic>> postConfig(
+    Map<String, dynamic> body, {
+    String? path,
+  }) async {
     return await _post(path ?? '/api/config', body);
   }
 
-  Future<Map<String, dynamic>> postData(String path, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> postData(
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     return await _post(path, body);
   }
 
@@ -43,7 +49,9 @@ class EspClawApi {
   }
 
   Future<void> uploadFile(String path, List<int> bytes) async {
-    final uri = Uri.parse('$baseUrl/api/files/upload?path=${Uri.encodeQueryComponent(path)}');
+    final uri = Uri.parse(
+      '$baseUrl/api/files/upload?path=${Uri.encodeQueryComponent(path)}',
+    );
     final request = await _client.postUrl(uri);
     request.add(bytes);
     final response = await request.close().timeout(_timeout);
@@ -57,7 +65,9 @@ class EspClawApi {
   }
 
   Future<void> deleteFile(String path) async {
-    final uri = Uri.parse('$baseUrl/api/files?path=${Uri.encodeQueryComponent(path)}');
+    final uri = Uri.parse(
+      '$baseUrl/api/files?path=${Uri.encodeQueryComponent(path)}',
+    );
     final request = await _client.deleteUrl(uri);
     final response = await request.close().timeout(_timeout);
     if (response.statusCode != 200) {
@@ -100,7 +110,7 @@ class EspClawApi {
     request.headers.contentType = ContentType.json;
     request.headers.contentLength = bytes.length;
     request.add(bytes);
-    
+
     final response = await request.close().timeout(_timeout);
     if (response.statusCode != 200) {
       throw Exception('POST $path failed with status ${response.statusCode}');

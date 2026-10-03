@@ -57,64 +57,88 @@ class _EspCapabilitiesPageState extends State<EspCapabilitiesPage> {
           ),
           title: const Text(
             'Capabilities',
-            style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         body: _isLoading
             ? const Center(child: CupertinoActivityIndicator(radius: 16))
             : _capabilities.isEmpty
-                ? const Center(child: Text('No capabilities found', style: TextStyle(color: Colors.white)))
-                : ListView(
-                    padding: const EdgeInsets.all(16),
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0C0C0E),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0x28FFFFFF)),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x10007AFF),
-                              blurRadius: 20,
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              itemCount: _capabilities.length,
-                              separatorBuilder: (context, index) => const Divider(
-                                color: Color(0x28FFFFFF),
-                                height: 1,
-                                indent: 56,
-                              ),
-                              itemBuilder: (context, index) {
-                                final cap = _capabilities[index];
-                                final name = cap['name'] ?? cap.toString();
-                                final enabled = cap['enabled'] ?? true;
-                                
-                                return ListTile(
-                                  leading: const Icon(CupertinoIcons.checkmark_circle_fill, color: Colors.white),
+            ? const Center(
+                child: Text(
+                  'No capabilities found',
+                  style: TextStyle(color: Colors.white),
+                ),
+              )
+            : ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0C0C0E),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: const Color(0x28FFFFFF)),
+                      boxShadow: const [
+                        BoxShadow(color: Color(0x10007AFF), blurRadius: 20),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          itemCount: _capabilities.length,
+                          separatorBuilder: (context, index) => const Divider(
+                            color: Color(0x28FFFFFF),
+                            height: 1,
+                            indent: 56,
+                          ),
+                          itemBuilder: (context, index) {
+                            final cap = _capabilities[index];
+                            final name = cap['name'] ?? cap.toString();
+                            final enabled = cap['enabled'] ?? true;
+
+                            return ListTile(
+                                  leading: const Icon(
+                                    CupertinoIcons.checkmark_circle_fill,
+                                    color: Colors.white,
+                                  ),
                                   title: Text(
                                     name,
-                                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                  trailing: enabled 
-                                      ? const Icon(CupertinoIcons.check_mark, color: CupertinoColors.activeGreen)
-                                      : const Icon(CupertinoIcons.clear, color: CupertinoColors.destructiveRed),
-                                ).animate().fadeIn(duration: 300.ms, delay: (index * 50).ms).slideX(begin: 0.05);
-                              },
-                            ),
-                          ),
+                                  trailing: enabled
+                                      ? const Icon(
+                                          CupertinoIcons.check_mark,
+                                          color: CupertinoColors.activeGreen,
+                                        )
+                                      : const Icon(
+                                          CupertinoIcons.clear,
+                                          color: CupertinoColors.destructiveRed,
+                                        ),
+                                )
+                                .animate()
+                                .fadeIn(
+                                  duration: 300.ms,
+                                  delay: (index * 50).ms,
+                                )
+                                .slideX(begin: 0.05);
+                          },
                         ),
-                      ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05),
-                    ],
-                  ),
+                      ),
+                    ),
+                  ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05),
+                ],
+              ),
       ),
     );
   }

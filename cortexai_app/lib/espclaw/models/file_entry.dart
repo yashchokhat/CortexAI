@@ -19,8 +19,8 @@ class FileEntry {
       path: json['path']?.toString() ?? '',
       isDirectory: json['isDirectory'] as bool? ?? false,
       size: json['size'] as int? ?? 0,
-      modifiedDate: json['modifiedDate'] != null 
-          ? DateTime.tryParse(json['modifiedDate'].toString()) 
+      modifiedDate: json['modifiedDate'] != null
+          ? DateTime.tryParse(json['modifiedDate'].toString())
           : null,
     );
   }

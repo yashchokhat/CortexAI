@@ -1,17 +1,32 @@
+import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'auth_page.dart';
 import 'services/api_service.dart';
-import 'services/auth_service.dart';
-import 'vertex_ai_page.dart';
 import 'template_action_page.dart';
 import 'widgets/glass_template_card.dart';
 import 'espclaw/screens/device_discovery_page.dart';
-import 'espclaw/screens/esp_dashboard_page.dart';
 import 'espclaw/screens/esp_chat_page.dart';
 import 'espclaw/screens/esp_config_page.dart';
+import 'espclaw/screens/esp_status_page.dart';
+import 'espclaw/screens/esp_capabilities_page.dart';
+import 'espclaw/screens/esp_files_page.dart';
+import 'espclaw/screens/esp_lua_page.dart';
+import 'espclaw/screens/esp_skills_page.dart';
+import 'espclaw/screens/esp_memory_page.dart';
+import 'espclaw/screens/esp_mcp_page.dart';
+import 'espclaw/screens/esp_scheduler_page.dart';
 import 'espclaw/services/connection_manager.dart';
+
+class _ActionItem {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final Widget? page;
+
+  _ActionItem(this.title, this.subtitle, this.icon, this.color, this.page);
+}
 
 /// Delicate white dot pattern painter for Vertex Agent card background
 class WhiteDotPatternPainter extends CustomPainter {
@@ -20,7 +35,8 @@ class WhiteDotPatternPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = const Color(0x1FFFFFFF) // Soft, refined white dots
+      ..color =
+          const Color(0x1FFFFFFF) // Soft, refined white dots
       ..style = PaintingStyle.fill;
 
     const spacing = 18.0;
@@ -52,7 +68,9 @@ class _HomePageState extends State<HomePage> {
 
   List<Template> _templates = [];
   bool _isLoadingTemplates = true;
-  bool _isGridTemplateView = false; // defaults to horizontal deck matching reference image
+  bool _showAllTemplates = false;
+  bool _isGridTemplateView =
+      false; // defaults to horizontal deck matching reference image
 
   @override
   void initState() {
@@ -97,11 +115,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openAgentConsole([String? prompt]) {
-    Navigator.of(context).push(
-      CupertinoPageRoute(
-        builder: (context) => VertexAIPage(initialPrompt: prompt),
-      ),
-    );
+    Navigator.of(
+      context,
+    ).push(CupertinoPageRoute(builder: (context) => const EspChatPage()));
   }
 
   void _showInfoDialog(String title, String message) {
@@ -114,7 +130,10 @@ class _HomePageState extends State<HomePage> {
         ),
         child: CupertinoAlertDialog(
           title: Text(title, style: const TextStyle(color: Colors.white)),
-          content: Text(message, style: const TextStyle(color: Color(0xCCFFFFFF))),
+          content: Text(
+            message,
+            style: const TextStyle(color: Color(0xCCFFFFFF)),
+          ),
           actions: [
             CupertinoDialogAction(
               child: const Text('OK', style: TextStyle(color: Colors.white)),
@@ -128,9 +147,8 @@ class _HomePageState extends State<HomePage> {
 
   void _showAccountDialog() {
     Navigator.of(context).maybePop();
-    final user = AuthService.instance.currentUser;
-    final name = user?.displayName ?? 'Abhishek Patel';
-    final email = user?.email ?? 'abhixyzxyz@gmail.com';
+    final name = 'Abhishek Patel';
+    final email = 'abhixyzxyz@gmail.com';
 
     showCupertinoModalPopup(
       context: context,
@@ -140,15 +158,31 @@ class _HomePageState extends State<HomePage> {
           primaryColor: Colors.white,
         ),
         child: CupertinoActionSheet(
-          title: Text(name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-          message: Text('$email\n\nPlan: Cortex Developer Pro\nOrganization Admin', style: const TextStyle(color: Color(0xCCFFFFFF))),
+          title: Text(
+            name,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          message: Text(
+            '$email\n\nPlan: Cortex Developer Pro\nOrganization Admin',
+            style: const TextStyle(color: Color(0xCCFFFFFF)),
+          ),
           actions: [
             CupertinoActionSheetAction(
-              child: const Text('API Credentials', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'API Credentials',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
             CupertinoActionSheetAction(
-              child: const Text('Connected Devices', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Connected Devices',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 _showConnectedDevicesSheet();
@@ -175,11 +209,24 @@ class _HomePageState extends State<HomePage> {
           primaryColor: Colors.white,
         ),
         child: CupertinoActionSheet(
-          title: const Text('Settings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
-          message: Text('API Gateway: ${ApiService.baseUrl}\nBackend: Go v1.20+ Gin\nDesign: Minimal Monochrome', style: const TextStyle(color: Color(0xCCFFFFFF))),
+          title: const Text(
+            'Settings',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          message: Text(
+            'API Gateway: ${ApiService.baseUrl}\nBackend: Go v1.20+ Gin\nDesign: Minimal Monochrome',
+            style: const TextStyle(color: Color(0xCCFFFFFF)),
+          ),
           actions: [
             CupertinoActionSheetAction(
-              child: const Text('Reload Templates', style: TextStyle(color: Colors.white)),
+              child: const Text(
+                'Reload Templates',
+                style: TextStyle(color: Colors.white),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() => _isLoadingTemplates = true);
@@ -255,7 +302,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 CupertinoButton(
                   padding: EdgeInsets.zero,
-                  child: const Icon(CupertinoIcons.xmark_circle_fill, color: Colors.white60, size: 22),
+                  child: const Icon(
+                    CupertinoIcons.xmark_circle_fill,
+                    color: Colors.white60,
+                    size: 22,
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -299,7 +350,10 @@ class _HomePageState extends State<HomePage> {
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0x1FFFFFFF),
                             borderRadius: BorderRadius.circular(8),
@@ -325,72 +379,47 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _handleSignOut() async {
-    await AuthService.instance.signOut();
-    if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 350),
-        pageBuilder: (context, animation, secondaryAnimation) => const AuthPage(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(opacity: animation, child: child);
-        },
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return CupertinoTheme(
       data: const CupertinoThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.white,
-        scaffoldBackgroundColor: Color(0xFF000000),
       ),
-      child: DefaultTextStyle(
-        style: const TextStyle(
-          decoration: TextDecoration.none,
-          color: Colors.white,
-          fontFamily: '.SF Pro Text',
-        ),
-        child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: const Color(0xFF000000),
-          drawer: _buildSideDrawer(),
-          body: SafeArea(
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: const Color(0xFF000000),
+        body: SafeArea(child: _buildMainScrollContent()),
+      ),
+    );
+  }
+
+  Widget _buildMainScrollContent() {
+    return SingleChildScrollView(
+      controller: _scrollController,
+      physics: const BouncingScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 12.0,
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: _scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Clean Vertex Agent Section with Light White Dots
-                        _buildVertexAgentSection(),
-
-                        const SizedBox(height: 28),
-                        
-                        // ESP-Claw Local Device Control Section
-                        _buildEspClawSection(),
-
-                        const SizedBox(height: 28),
-
-                        // Vertical Templates Grid with API-backed Square Cards
-                        _buildTemplatesSection(),
-
-                        const SizedBox(height: 36),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildVertexAgentSection(),
+                const SizedBox(height: 28),
+                _buildTemplatesSection(),
+                const SizedBox(height: 28),
+                _buildEspClawSection(),
+                const SizedBox(height: 36),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -402,10 +431,7 @@ class _HomePageState extends State<HomePage> {
       decoration: const BoxDecoration(
         color: Color(0xFF000000),
         border: Border(
-          bottom: BorderSide(
-            color: Color(0x1AFFFFFF),
-            width: 0.8,
-          ),
+          bottom: BorderSide(color: Color(0x1AFFFFFF), width: 0.8),
         ),
       ),
       child: Row(
@@ -421,10 +447,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFF141416),
-                border: Border.all(
-                  color: const Color(0x2EFFFFFF),
-                  width: 0.8,
-                ),
+                border: Border.all(color: const Color(0x2EFFFFFF), width: 0.8),
               ),
               child: const Center(
                 child: Icon(
@@ -456,10 +479,7 @@ class _HomePageState extends State<HomePage> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFF141416),
-                border: Border.all(
-                  color: const Color(0x38FFFFFF),
-                  width: 1.0,
-                ),
+                border: Border.all(color: const Color(0x38FFFFFF), width: 1.0),
               ),
               child: const Center(
                 child: Text(
@@ -486,10 +506,7 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
         color: const Color(0xFF0C0C0E),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0x28FFFFFF),
-          width: 0.8,
-        ),
+        border: Border.all(color: const Color(0x28FFFFFF), width: 0.8),
         boxShadow: const [
           BoxShadow(
             color: Color(0x10007AFF), // subtle blue aura
@@ -504,9 +521,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             // Light white dot pattern texture in background
             const Positioned.fill(
-              child: CustomPaint(
-                painter: WhiteDotPatternPainter(),
-              ),
+              child: CustomPaint(painter: WhiteDotPatternPainter()),
             ),
 
             // Content
@@ -516,7 +531,6 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Removed redundant top badge
-
                   const SizedBox(height: 16),
 
                   const Text(
@@ -566,7 +580,11 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           SizedBox(width: 6),
-                          Icon(CupertinoIcons.arrow_right, color: Colors.black, size: 14),
+                          Icon(
+                            CupertinoIcons.arrow_right,
+                            color: Colors.black,
+                            size: 14,
+                          ),
                         ],
                       ),
                     ),
@@ -581,6 +599,65 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildEspClawSection() {
+    final actions = [
+      _ActionItem(
+        'Status',
+        'System Info',
+        CupertinoIcons.device_laptop,
+        const Color(0xFF30D158),
+        const EspStatusPage(),
+      ),
+      _ActionItem(
+        'Features',
+        'Capabilities',
+        CupertinoIcons.slider_horizontal_3,
+        const Color(0xFFFF9F0A),
+        const EspCapabilitiesPage(),
+      ),
+      _ActionItem(
+        'Files',
+        'Storage',
+        CupertinoIcons.folder_fill,
+        const Color(0xFF5E5CE6),
+        const EspFilesPage(),
+      ),
+      _ActionItem(
+        'Lua Scripts',
+        'Code Modules',
+        Icons.code_rounded,
+        const Color(0xFFFF375F),
+        const EspLuaPage(),
+      ),
+      _ActionItem(
+        'Skills',
+        'Agent Skills',
+        CupertinoIcons.sparkles,
+        const Color(0xFFBF5AF2),
+        const EspSkillsPage(),
+      ),
+      _ActionItem(
+        'MCP',
+        'Connections',
+        CupertinoIcons.link,
+        const Color(0xFFFFD60A),
+        const EspMcpPage(),
+      ),
+      _ActionItem(
+        'Cron Jobs',
+        'Scheduler',
+        CupertinoIcons.timer,
+        const Color(0xFFFF9F0A),
+        const EspSchedulerPage(),
+      ),
+      _ActionItem(
+        'Settings',
+        'Configuration',
+        CupertinoIcons.settings,
+        const Color(0xFF8E8E93),
+        const EspConfigPage(),
+      ),
+    ];
+
     return StreamBuilder<bool>(
       stream: ConnectionManager.instance.isConnected,
       initialData: ConnectionManager.instance.selectedDevice != null,
@@ -588,89 +665,165 @@ class _HomePageState extends State<HomePage> {
         final isConnected = snapshot.data ?? false;
         final device = ConnectionManager.instance.selectedDevice;
 
-        return GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              CupertinoPageRoute(builder: (_) => isConnected ? const EspDashboardPage() : const DeviceDiscoveryPage()),
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF0C0C0E),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: const Color(0x28FFFFFF)),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(24),
-              child: Stack(
-                children: [
-                  CustomPaint(
-                    size: const Size(double.infinity, 100),
-                    painter: const WhiteDotPatternPainter(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1C1C1E),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0x33FFFFFF)),
-                          ),
-                          child: const Icon(CupertinoIcons.device_laptop, color: Colors.white, size: 24),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  const Text(
-                                    'ESP-Claw',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  if (isConnected)
-                                    Container(
-                                      width: 8,
-                                      height: 8,
-                                      decoration: const BoxDecoration(
-                                        color: Color(0xFF34C759),
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                isConnected ? 'Connected to ${device?.name ?? "Device"}' : 'Local Device Control & Hardware',
-                                style: TextStyle(
-                                  color: isConnected ? const Color(0xFF34C759) : const Color(0x99FFFFFF),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(CupertinoIcons.chevron_right, color: Color(0x55FFFFFF)),
-                      ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Text(
+                      'Vertex Agent ESP',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
+                    const SizedBox(width: 8),
+                    if (isConnected)
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF34C759),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                  ],
+                ),
+                if (!isConnected)
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    child: const Text(
+                      'Connect',
+                      style: TextStyle(
+                        color: CupertinoColors.activeBlue,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    onPressed: () =>
+                        Navigator.of(context, rootNavigator: true).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const DeviceDiscoveryPage(),
+                          ),
+                        ),
                   ),
-                ],
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              isConnected
+                  ? 'Connected to ${device?.name ?? "Device"} • ${device?.ip ?? ""}'
+                  : 'Local Device Control & Hardware',
+              style: TextStyle(
+                color: isConnected
+                    ? const Color(0xFF34C759)
+                    : const Color(0x99FFFFFF),
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 16),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 1.15,
+              ),
+              itemCount: actions.length,
+              itemBuilder: (context, index) {
+                final item = actions[index];
+                return _buildActionCard(item, index);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildActionCard(_ActionItem item, int index) {
+    return GestureDetector(
+          onTap: () {
+            if (item.page != null) {
+              Navigator.of(
+                context,
+              ).push(CupertinoPageRoute(builder: (_) => item.page!));
+            }
+          },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(22),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: const Color(0x99141415),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: const Color(0x28FFFFFF)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: item.color.withOpacity(0.04),
+                      blurRadius: 15,
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(14.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: item.color.withOpacity(0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(item.icon, color: item.color, size: 24),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.title,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: '.SF Pro Text',
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            item.subtitle,
+                            style: const TextStyle(
+                              color: Color(0x66FFFFFF),
+                              fontSize: 11,
+                              fontFamily: '.SF Pro Text',
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
-        ).animate().fadeIn(duration: 400.ms, delay: 100.ms).slideY(begin: 0.05);
-      }
-    );
+        )
+        .animate()
+        .fadeIn(duration: 350.ms, delay: (index * 40).ms)
+        .slideY(begin: 0.1, curve: Curves.easeOutCubic);
   }
 
   void _openTemplateAction(Template tpl, int index) {
@@ -678,7 +831,8 @@ class _HomePageState extends State<HomePage> {
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
         reverseTransitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) => TemplateActionPage(template: tpl, index: index),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            TemplateActionPage(template: tpl, index: index),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -710,7 +864,10 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(width: 8),
                 if (!_isLoadingTemplates && _templates.isNotEmpty)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2.5,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0x18FFFFFF),
                       borderRadius: BorderRadius.circular(8),
@@ -752,310 +909,64 @@ class _HomePageState extends State<HomePage> {
           )
         else
           // Grid Mode: 2-Column Vertical Grid of Glass Cards
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _templates.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 14,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.0, // Square cards
-            ),
-            itemBuilder: (context, index) {
-              final tpl = _templates[index];
-              return Hero(
-                tag: 'template_card_${tpl.id}',
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: GlassTemplateCard(
-                    template: tpl,
-                    index: index,
-                    onTap: () => _openTemplateAction(tpl, index),
-                  ),
-                ),
-              )
-                  .animate()
-                  .fadeIn(duration: 300.ms, delay: (index * 35).ms)
-                  .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic);
-            },
-          ),
-      ],
-    );
-  }
-
-  /// Minimal Side Drawer in pure White & Black
-  Widget _buildSideDrawer() {
-    final user = AuthService.instance.currentUser;
-    final name = user?.displayName ?? 'Abhishek Patel';
-    final email = user?.email ?? 'abhixyzxyz@gmail.com';
-
-    return Drawer(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      child: Container(
-        color: const Color(0xFF0A0A0C),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Column(
             children: [
-              // Drawer Header
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset(
-                      'lib/icon/head_banner.png',
-                      height: 30,
-                      fit: BoxFit.contain,
-                    ),
-                    const SizedBox(height: 18),
-                    Row(
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF141416),
-                            border: Border.all(
-                              color: const Color(0x33FFFFFF),
-                              width: 1.0,
-                            ),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'AP',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14.5,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                email,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Color(0x77FFFFFF),
-                                  fontSize: 11.5,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: _showAllTemplates
+                    ? _templates.length
+                    : (_templates.length > 6 ? 6 : _templates.length),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 14,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: 1.0, // Square cards
                 ),
-              ),
-
-              const Divider(color: Color(0x1AFFFFFF), height: 1),
-
-              // Drawer Navigation Items
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  children: [
-                    _buildDrawerSectionTitle('NAVIGATION'),
-                    _buildDrawerItem(
-                      icon: CupertinoIcons.home,
-                      title: 'Dashboard Overview',
-                      onTap: () {
-                        Navigator.of(context).maybePop();
-                        _scrollController.animateTo(
-                          0,
-                          duration: const Duration(milliseconds: 350),
-                          curve: Curves.easeOut,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    _buildDrawerSectionTitle('VERTEX AGENT (ESP-CLAW)'),
-                    StreamBuilder<bool>(
-                      stream: ConnectionManager.instance.isConnected,
-                      initialData: ConnectionManager.instance.selectedDevice != null,
-                      builder: (context, snapshot) {
-                        final connected = snapshot.data ?? false;
-                        if (!connected) {
-                          return _buildDrawerItem(
-                            icon: CupertinoIcons.search,
-                            title: 'Discover & Connect',
-                            badge: 'SCAN',
-                            onTap: () {
-                              Navigator.of(context).maybePop();
-                              Navigator.of(context).push(
-                                CupertinoPageRoute(builder: (_) => const DeviceDiscoveryPage()),
-                              );
-                            },
-                          );
-                        }
-                        
-                        return Column(
-                          children: [
-                            _buildDrawerItem(
-                              icon: CupertinoIcons.chat_bubble_2_fill,
-                              title: 'Agent Chat',
-                              badge: 'ONLINE',
-                              onTap: () {
-                                Navigator.of(context).maybePop();
-                                Navigator.of(context).push(CupertinoPageRoute(builder: (_) => const EspChatPage()));
-                              },
-                            ),
-                            _buildDrawerItem(
-                              icon: CupertinoIcons.device_laptop,
-                              title: 'Dashboard Overview',
-                              onTap: () {
-                                Navigator.of(context).maybePop();
-                                Navigator.of(context).push(CupertinoPageRoute(builder: (_) => const EspDashboardPage()));
-                              },
-                            ),
-                            _buildDrawerItem(
-                              icon: CupertinoIcons.gear_alt_fill,
-                              title: 'Configuration',
-                              onTap: () {
-                                Navigator.of(context).maybePop();
-                                Navigator.of(context).push(CupertinoPageRoute(builder: (_) => const EspConfigPage()));
-                              },
-                            ),
-                          ],
-                        );
-                      }
-                    ),
-
-                    const SizedBox(height: 16),
-                    _buildDrawerSectionTitle('ACCOUNT'),
-                    _buildDrawerItem(
-                      icon: CupertinoIcons.person_crop_circle,
-                      title: 'Account Profile',
-                      onTap: _showAccountDialog,
-                    ),
-                    _buildDrawerItem(
-                      icon: CupertinoIcons.book_fill,
-                      title: 'Documentation',
-                      onTap: () {
-                        Navigator.of(context).maybePop();
-                        _showInfoDialog('Documentation', 'CortexAI Edge Developer Manual: https://cortexai.dev');
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              const Divider(color: Color(0x1AFFFFFF), height: 1),
-
-              // Sign Out
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                child: CupertinoButton(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  color: const Color(0x14FFFFFF),
-                  borderRadius: BorderRadius.circular(14),
-                  onPressed: _handleSignOut,
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(CupertinoIcons.square_arrow_left, size: 16, color: Colors.white70),
-                      SizedBox(width: 8),
-                      Text(
-                        'Sign Out',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
+                itemBuilder: (context, index) {
+                  final tpl = _templates[index];
+                  return Hero(
+                        tag: 'template_card_${tpl.id}',
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: GlassTemplateCard(
+                            template: tpl,
+                            index: index,
+                            onTap: () => _openTemplateAction(tpl, index),
+                          ),
                         ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 300.ms, delay: (index * 35).ms)
+                      .slideY(begin: 0.06, end: 0, curve: Curves.easeOutCubic);
+                },
+              ),
+              if (!_showAllTemplates && _templates.length > 6)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: CupertinoButton(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    color: const Color(0xFF1C1C1E),
+                    borderRadius: BorderRadius.circular(12),
+                    child: const Text(
+                      'Load More',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
-                    ],
+                    ),
+                    onPressed: () {
+                      setState(() => _showAllTemplates = true);
+                    },
                   ),
                 ),
-              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawerSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 12, top: 10, bottom: 6),
-      child: Text(
-        title,
-        style: const TextStyle(
-          color: Color(0x66FFFFFF),
-          fontSize: 10.5,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1.0,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDrawerItem({
-    required IconData icon,
-    required String title,
-    String? badge,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 4),
-      child: CupertinoButton(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.transparent,
-        onPressed: onTap,
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            if (badge != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: const Color(0x1FFFFFFF),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  badge,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }

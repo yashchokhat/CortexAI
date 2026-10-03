@@ -20,7 +20,7 @@ class ConnectionManager {
   Future<bool> connect(EspClawDevice device) async {
     _selectedDevice = device;
     _api = EspClawApi(ip: device.ip);
-    
+
     final healthy = await _api!.healthCheck();
     if (healthy) {
       _connectionController.add(true);

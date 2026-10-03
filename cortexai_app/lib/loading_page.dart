@@ -1,17 +1,14 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'auth_page.dart';
+import 'espclaw/screens/device_discovery_page.dart';
 
 /// Funky Orbital Painter with dual rotating rings and orbital telemetry nodes
 class FunkyOrbitalPainter extends CustomPainter {
   final double rotation;
   final double pulse;
 
-  const FunkyOrbitalPainter({
-    required this.rotation,
-    required this.pulse,
-  });
+  const FunkyOrbitalPainter({required this.rotation, required this.pulse});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -100,7 +97,8 @@ class LoadingPage extends StatefulWidget {
   State<LoadingPage> createState() => _LoadingPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage> with TickerProviderStateMixin {
+class _LoadingPageState extends State<LoadingPage>
+    with TickerProviderStateMixin {
   late AnimationController _orbitalController;
   late AnimationController _pulseController;
   int _statusIndex = 0;
@@ -135,19 +133,24 @@ class _LoadingPageState extends State<LoadingPage> with TickerProviderStateMixin
       if (mounted) setState(() => _statusIndex = 2);
     });
 
-    // Smooth transition to AuthPage
+    // Smooth transition to DeviceDiscoveryPage
     Future.delayed(const Duration(milliseconds: 2700), () {
       if (mounted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
             transitionDuration: const Duration(milliseconds: 600),
-            pageBuilder: (context, animation, secondaryAnimation) => const AuthPage(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                child: child,
-              );
-            },
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const DeviceDiscoveryPage(),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return FadeTransition(
+                    opacity: CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeInOut,
+                    ),
+                    child: child,
+                  );
+                },
           ),
         );
       }
@@ -174,7 +177,10 @@ class _LoadingPageState extends State<LoadingPage> with TickerProviderStateMixin
 
               // Funky Animated Orbital Icon Centerpiece
               AnimatedBuilder(
-                animation: Listenable.merge([_orbitalController, _pulseController]),
+                animation: Listenable.merge([
+                  _orbitalController,
+                  _pulseController,
+                ]),
                 builder: (context, child) {
                   final pulseVal = _pulseController.value;
                   final scaleVal = 1.0 + (pulseVal * 0.04);
@@ -210,7 +216,9 @@ class _LoadingPageState extends State<LoadingPage> with TickerProviderStateMixin
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.white.withValues(alpha: 0.06 + 0.06 * pulseVal),
+                                  color: Colors.white.withValues(
+                                    alpha: 0.06 + 0.06 * pulseVal,
+                                  ),
                                   blurRadius: 30,
                                   spreadRadius: 2,
                                 ),
@@ -237,14 +245,14 @@ class _LoadingPageState extends State<LoadingPage> with TickerProviderStateMixin
 
               // Title Typography with Shimmer and Entry Fade
               const Text(
-                'CORTEX AI',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 5.5,
-                ),
-              )
+                    'CORTEX AI',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 5.5,
+                    ),
+                  )
                   .animate()
                   .fadeIn(duration: 500.ms)
                   .shimmer(duration: 1800.ms, color: const Color(0x55FFFFFF)),

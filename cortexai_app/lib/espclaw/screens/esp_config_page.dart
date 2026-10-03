@@ -37,7 +37,7 @@ class _EspConfigPageState extends State<EspConfigPage> {
 
   Future<void> _fetchConfig() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final client = ConnectionManager.instance.api;
       if (client != null) {
@@ -79,9 +79,14 @@ class _EspConfigPageState extends State<EspConfigPage> {
           context: context,
           builder: (context) => CupertinoAlertDialog(
             title: const Text('Success'),
-            content: const Text('Configuration saved to device. Restart device to apply changes.'),
+            content: const Text(
+              'Configuration saved to device. Restart device to apply changes.',
+            ),
             actions: [
-              CupertinoDialogAction(child: const Text('OK'), onPressed: () => Navigator.pop(context))
+              CupertinoDialogAction(
+                child: const Text('OK'),
+                onPressed: () => Navigator.pop(context),
+              ),
             ],
           ),
         );
@@ -94,7 +99,10 @@ class _EspConfigPageState extends State<EspConfigPage> {
             title: const Text('Error'),
             content: Text('Failed to save configuration: $e'),
             actions: [
-              CupertinoDialogAction(child: const Text('OK'), onPressed: () => Navigator.pop(context))
+              CupertinoDialogAction(
+                child: const Text('OK'),
+                onPressed: () => Navigator.pop(context),
+              ),
             ],
           ),
         );
@@ -102,18 +110,33 @@ class _EspConfigPageState extends State<EspConfigPage> {
     }
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool isObscure = false, Widget? suffix}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    bool isObscure = false,
+    Widget? suffix,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Color(0x99FFFFFF), fontSize: 13, fontFamily: '.SF Pro Text')),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Color(0x99FFFFFF),
+              fontSize: 13,
+              fontFamily: '.SF Pro Text',
+            ),
+          ),
           const SizedBox(height: 6),
           CupertinoTextField(
             controller: controller,
             obscureText: isObscure,
-            style: const TextStyle(color: Colors.white, fontFamily: '.SF Pro Text'),
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: '.SF Pro Text',
+            ),
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: const Color(0xFF141416),
@@ -143,7 +166,15 @@ class _EspConfigPageState extends State<EspConfigPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600, fontFamily: '.SF Pro Text')),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: '.SF Pro Text',
+                ),
+              ),
               const SizedBox(height: 16),
               child,
             ],
@@ -168,24 +199,42 @@ class _EspConfigPageState extends State<EspConfigPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
+    return Scaffold(
       backgroundColor: const Color(0xFF000000),
-      navigationBar: CupertinoNavigationBar(
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
         backgroundColor: Colors.transparent,
-        border: null,
+
         leading: CupertinoButton(
           padding: EdgeInsets.zero,
           child: const Icon(CupertinoIcons.back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        middle: const Text('Configuration', style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600, fontFamily: '.SF Pro Text')),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: _isLoading ? null : _saveConfig,
-          child: const Text('Save', style: TextStyle(color: CupertinoColors.activeBlue, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Configuration',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            fontFamily: '.SF Pro Text',
+          ),
         ),
+        actions: [
+          CupertinoButton(
+            padding: EdgeInsets.zero,
+            onPressed: _isLoading ? null : _saveConfig,
+            child: const Text(
+              'Save',
+              style: TextStyle(
+                color: CupertinoColors.activeBlue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
-      child: SafeArea(
+      body: SafeArea(
         child: _isLoading
             ? const Center(child: CupertinoActivityIndicator())
             : ListView(
@@ -196,11 +245,24 @@ class _EspConfigPageState extends State<EspConfigPage> {
                     child: Column(
                       children: [
                         _buildTextField('SSID', _wifiSsidCtrl),
-                        _buildTextField('Password', _wifiPwdCtrl, isObscure: _obscureWifiPassword, suffix: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          child: Icon(_obscureWifiPassword ? CupertinoIcons.eye : CupertinoIcons.eye_slash, color: Colors.white),
-                          onPressed: () => setState(() => _obscureWifiPassword = !_obscureWifiPassword),
-                        )),
+                        _buildTextField(
+                          'Password',
+                          _wifiPwdCtrl,
+                          isObscure: _obscureWifiPassword,
+                          suffix: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Icon(
+                              _obscureWifiPassword
+                                  ? CupertinoIcons.eye
+                                  : CupertinoIcons.eye_slash,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => setState(
+                              () =>
+                                  _obscureWifiPassword = !_obscureWifiPassword,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -208,13 +270,31 @@ class _EspConfigPageState extends State<EspConfigPage> {
                     title: 'Core LLM Engine',
                     child: Column(
                       children: [
-                        _buildTextField('Backend Type (e.g. openai)', _llmBackendCtrl),
-                        _buildTextField('Model Name (e.g. gpt-4o)', _llmModelCtrl),
-                        _buildTextField('API Key', _llmApiKeyCtrl, isObscure: _obscureApiKey, suffix: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          child: Icon(_obscureApiKey ? CupertinoIcons.eye : CupertinoIcons.eye_slash, color: Colors.white),
-                          onPressed: () => setState(() => _obscureApiKey = !_obscureApiKey),
-                        )),
+                        _buildTextField(
+                          'Backend Type (e.g. openai)',
+                          _llmBackendCtrl,
+                        ),
+                        _buildTextField(
+                          'Model Name (e.g. gpt-4o)',
+                          _llmModelCtrl,
+                        ),
+                        _buildTextField(
+                          'API Key',
+                          _llmApiKeyCtrl,
+                          isObscure: _obscureApiKey,
+                          suffix: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Icon(
+                              _obscureApiKey
+                                  ? CupertinoIcons.eye
+                                  : CupertinoIcons.eye_slash,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => setState(
+                              () => _obscureApiKey = !_obscureApiKey,
+                            ),
+                          ),
+                        ),
                         _buildTextField('Base URL', _llmBaseUrlCtrl),
                         _buildTextField('Max Tokens', _llmMaxTokensCtrl),
                       ],
@@ -224,18 +304,33 @@ class _EspConfigPageState extends State<EspConfigPage> {
                     title: 'Search Skill',
                     child: Column(
                       children: [
-                        _buildTextField('Brave API Key', _searchBraveKeyCtrl, isObscure: _obscureSearchKey, suffix: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          child: Icon(_obscureSearchKey ? CupertinoIcons.eye : CupertinoIcons.eye_slash, color: Colors.white),
-                          onPressed: () => setState(() => _obscureSearchKey = !_obscureSearchKey),
-                        )),
+                        _buildTextField(
+                          'Brave API Key',
+                          _searchBraveKeyCtrl,
+                          isObscure: _obscureSearchKey,
+                          suffix: CupertinoButton(
+                            padding: EdgeInsets.zero,
+                            child: Icon(
+                              _obscureSearchKey
+                                  ? CupertinoIcons.eye
+                                  : CupertinoIcons.eye_slash,
+                              color: Colors.white,
+                            ),
+                            onPressed: () => setState(
+                              () => _obscureSearchKey = !_obscureSearchKey,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 32),
                   CupertinoButton.filled(
                     onPressed: _saveConfig,
-                    child: const Text('Save to Device', style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: const Text(
+                      'Save to Device',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ).animate().fadeIn().slideY(),
                   const SizedBox(height: 24),
                 ],

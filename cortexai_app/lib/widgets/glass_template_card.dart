@@ -240,10 +240,7 @@ class _GlassTemplateCardState extends State<GlassTemplateCard> {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        theme.primary,
-                        theme.secondary,
-                      ],
+                      colors: [theme.primary, theme.secondary],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -359,16 +356,30 @@ class _GlassTemplateCardState extends State<GlassTemplateCard> {
                                 children: [
                                   // Top Row: Icon + Category
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Icon(theme.icon, color: theme.primary, size: 24),
+                                      Icon(
+                                        theme.icon,
+                                        color: theme.primary,
+                                        size: 24,
+                                      ),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
                                         decoration: BoxDecoration(
                                           color: Colors.black,
-                                          borderRadius: BorderRadius.circular(6),
-                                          border: Border.all(color: const Color(0x33FFFFFF), width: 0.5),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
+                                          border: Border.all(
+                                            color: const Color(0x33FFFFFF),
+                                            width: 0.5,
+                                          ),
                                         ),
                                         child: Text(
                                           theme.tier.toUpperCase(),

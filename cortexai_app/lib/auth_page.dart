@@ -9,10 +9,7 @@ import 'home_page.dart';
 class AuthPage extends StatefulWidget {
   final bool initialIsRegister;
 
-  const AuthPage({
-    super.key,
-    this.initialIsRegister = false,
-  });
+  const AuthPage({super.key, this.initialIsRegister = false});
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -69,16 +66,20 @@ class _AuthPageState extends State<AuthPage> {
             transitionDuration: const Duration(milliseconds: 500),
             pageBuilder: (context, animation, secondaryAnimation) =>
                 const HomePage(),
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              const begin = Offset(0.04, 0.0);
-              const end = Offset.zero;
-              const curve = Curves.easeOutCubic;
-              final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-              return SlideTransition(
-                position: animation.drive(tween),
-                child: FadeTransition(opacity: animation, child: child),
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(0.04, 0.0);
+                  const end = Offset.zero;
+                  const curve = Curves.easeOutCubic;
+                  final tween = Tween(
+                    begin: begin,
+                    end: end,
+                  ).chain(CurveTween(curve: curve));
+                  return SlideTransition(
+                    position: animation.drive(tween),
+                    child: FadeTransition(opacity: animation, child: child),
+                  );
+                },
           ),
         );
       }
@@ -87,8 +88,14 @@ class _AuthPageState extends State<AuthPage> {
         showCupertinoDialog(
           context: context,
           builder: (context) => CupertinoAlertDialog(
-            title: const Text('Authentication Error', style: TextStyle(decoration: TextDecoration.none)),
-            content: Text(e.toString(), style: const TextStyle(decoration: TextDecoration.none)),
+            title: const Text(
+              'Authentication Error',
+              style: TextStyle(decoration: TextDecoration.none),
+            ),
+            content: Text(
+              e.toString(),
+              style: const TextStyle(decoration: TextDecoration.none),
+            ),
             actions: [
               CupertinoDialogAction(
                 child: const Text('OK'),
@@ -107,7 +114,8 @@ class _AuthPageState extends State<AuthPage> {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 500),
-        pageBuilder: (context, animation, secondaryAnimation) => const HomePage(),
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const HomePage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(opacity: animation, child: child);
         },
@@ -160,9 +168,7 @@ class _AuthPageState extends State<AuthPage> {
                               children: [
                                 _buildTopHeader(),
                                 const SizedBox(height: 8),
-                                Expanded(
-                                  child: _buildFormCard(),
-                                ),
+                                Expanded(child: _buildFormCard()),
                               ],
                             ),
                           ),
@@ -186,10 +192,7 @@ class _AuthPageState extends State<AuthPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF0D0D0D),
         borderRadius: BorderRadius.circular(28.0),
-        border: Border.all(
-          color: const Color(0x2EFFFFFF),
-          width: 1.0,
-        ),
+        border: Border.all(color: const Color(0x2EFFFFFF), width: 1.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -290,12 +293,7 @@ class _AuthPageState extends State<AuthPage> {
           topLeft: Radius.circular(32),
           topRight: Radius.circular(32),
         ),
-        border: Border(
-          top: BorderSide(
-            color: Color(0x2EFFFFFF),
-            width: 1.0,
-          ),
-        ),
+        border: Border(top: BorderSide(color: Color(0x2EFFFFFF), width: 1.0)),
       ),
       padding: const EdgeInsets.fromLTRB(22.0, 24.0, 22.0, 36.0),
       child: Column(
@@ -350,7 +348,10 @@ class _AuthPageState extends State<AuthPage> {
                   showCupertinoDialog(
                     context: context,
                     builder: (context) => CupertinoAlertDialog(
-                      title: const Text('Reset Password', style: TextStyle(decoration: TextDecoration.none)),
+                      title: const Text(
+                        'Reset Password',
+                        style: TextStyle(decoration: TextDecoration.none),
+                      ),
                       content: const Text(
                         'A password reset link will be sent to your registered email address.',
                         style: TextStyle(decoration: TextDecoration.none),
@@ -427,10 +428,7 @@ class _AuthPageState extends State<AuthPage> {
             Row(
               children: [
                 Expanded(
-                  child: Container(
-                    height: 1,
-                    color: const Color(0x26FFFFFF),
-                  ),
+                  child: Container(height: 1, color: const Color(0x26FFFFFF)),
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14.0),
@@ -445,10 +443,7 @@ class _AuthPageState extends State<AuthPage> {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    height: 1,
-                    color: const Color(0x26FFFFFF),
-                  ),
+                  child: Container(height: 1, color: const Color(0x26FFFFFF)),
                 ),
               ],
             ),
@@ -542,10 +537,7 @@ class _AuthPageState extends State<AuthPage> {
       decoration: BoxDecoration(
         color: const Color(0xFF0F0F0F),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: const Color(0x26FFFFFF),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0x26FFFFFF), width: 1),
       ),
       child: CupertinoButton(
         padding: EdgeInsets.zero,

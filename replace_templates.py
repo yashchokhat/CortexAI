@@ -1,0 +1,168 @@
+import re
+
+with open("cortexai_app/lib/services/api_service.dart", "r") as f:
+    content = f.read()
+
+fallback_old = """    return const [
+      Template(
+        id: 'tpl-weather',
+        title: 'Show Weather',
+        chip: 'Live Sync',
+        description: 'Atmospheric conditions, humidity & barometric readings.',
+        icon: 'weather',
+        actionPrompt: 'Fetch local weather report and current atmospheric telemetry.',
+        category: 'Utility',
+      ),
+      Template(
+        id: 'tpl-score',
+        title: 'Get Score',
+        chip: 'Live Feed',
+        description: 'Real-time match scores and league standings feed.',
+        icon: 'score',
+        actionPrompt: 'Stream current match live score and game analytics.',
+        category: 'Feed',
+      ),
+      Template(
+        id: 'tpl-temp-hum',
+        title: 'Fetch Temp & Humidity',
+        chip: 'I2C Sensor',
+        description: 'Read SHTC3 precision thermal and relative humidity levels.',
+        icon: 'thermo',
+        actionPrompt: 'Query I2C bus 0x70 for real-time temperature and humidity.',
+        category: 'Sensors',
+      ),
+      Template(
+        id: 'tpl-on-led',
+        title: 'On LED',
+        chip: 'GPIO Out',
+        description: 'Energize onboard diagnostic LED and optical beacon.',
+        icon: 'lightbulb_on',
+        actionPrompt: 'Send HIGH logic pulse to GPIO 2 status LED.',
+        category: 'Hardware',
+      ),
+      Template(
+        id: 'tpl-off-led',
+        title: 'Off LED',
+        chip: 'GPIO Out',
+        description: 'Extinguish active LED arrays to conserve edge power draw.',
+        icon: 'lightbulb_off',
+        actionPrompt: 'Send LOW logic pulse to GPIO 2 status LED.',
+        category: 'Hardware',
+      ),
+      Template(
+        id: 'tpl-notification',
+        title: 'Send Notification',
+        chip: 'Push APN',
+        description: 'Dispatch high-priority alert notification to client device.',
+        icon: 'bell',
+        actionPrompt: 'Dispatch push notification to primary developer endpoint.',
+        category: 'Alerts',
+      ),
+      Template(
+        id: 'tpl-read-sensor',
+        title: 'Read Sensor',
+        chip: 'ADC Pin',
+        description: 'Sample 12-bit analog input channels for raw voltage wave.',
+        icon: 'gauge',
+        actionPrompt: 'Sample analog channel A0-A3 voltage waveform buffer.',
+        category: 'Sensors',
+      ),
+      Template(
+        id: 'tpl-trigger-alert',
+        title: 'Trigger Alert',
+        chip: 'Relay Switch',
+        description: 'Trip emergency safety relay and sound warning buzzer.',
+        icon: 'alert',
+        actionPrompt: 'Trip hardware safety relay switch and arm perimeter buzzer.',
+        category: 'Security',
+      ),
+    ];"""
+
+fallback_new = """    return const [
+      Template(
+        id: 'tpl-led-on',
+        title: 'Turn On Built-in LED',
+        chip: 'GPIO',
+        description: 'Energize onboard diagnostic LED.',
+        icon: 'lightbulb_on',
+        actionPrompt: 'Set GPIO 2 to HIGH.',
+        category: 'Hardware',
+      ),
+      Template(
+        id: 'tpl-led-off',
+        title: 'Turn Off Built-in LED',
+        chip: 'GPIO',
+        description: 'Extinguish active LED arrays.',
+        icon: 'lightbulb_off',
+        actionPrompt: 'Set GPIO 2 to LOW.',
+        category: 'Hardware',
+      ),
+      Template(
+        id: 'tpl-sys-status',
+        title: 'Check System Status',
+        chip: 'Diagnostics',
+        description: 'Get uptime, heap, and firmware details.',
+        icon: 'cpu',
+        actionPrompt: 'Report full system status, free heap, and uptime.',
+        category: 'System',
+      ),
+      Template(
+        id: 'tpl-scan-wifi',
+        title: 'Scan WiFi Networks',
+        chip: 'Network',
+        description: 'Scan and list nearby APs.',
+        icon: 'wifi',
+        actionPrompt: 'Run a WiFi scan and list all visible networks.',
+        category: 'Network',
+      ),
+      Template(
+        id: 'tpl-clear-mem',
+        title: 'Clear Cache/Memory',
+        chip: 'Maintenance',
+        description: 'Trigger garbage collection.',
+        icon: 'trash',
+        actionPrompt: 'Clear temporary caches and run garbage collection.',
+        category: 'System',
+      ),
+      Template(
+        id: 'tpl-read-temp',
+        title: 'Read Temperature',
+        chip: 'I2C Sensor',
+        description: 'Read thermal levels.',
+        icon: 'thermo',
+        actionPrompt: 'Read temperature sensor data and report.',
+        category: 'Sensors',
+      ),
+      Template(
+        id: 'tpl-reboot',
+        title: 'Reboot Device',
+        chip: 'Power',
+        description: 'Soft reboot the ESP32.',
+        icon: 'restart',
+        actionPrompt: 'Reboot the system safely.',
+        category: 'System',
+      ),
+      Template(
+        id: 'tpl-blink-led',
+        title: 'Blink LED Pattern',
+        chip: 'GPIO',
+        description: 'Blink LED in an SOS pattern.',
+        icon: 'flash',
+        actionPrompt: 'Blink the built-in LED in an SOS pattern (3 short, 3 long, 3 short).',
+        category: 'Hardware',
+      ),
+      Template(
+        id: 'tpl-deep-sleep',
+        title: 'Deep Sleep (10s)',
+        chip: 'Power',
+        description: 'Enter deep sleep to save power.',
+        icon: 'sleep',
+        actionPrompt: 'Enter deep sleep mode for 10 seconds.',
+        category: 'Power',
+      ),
+    ];"""
+
+content = content.replace(fallback_old, fallback_new)
+
+with open("cortexai_app/lib/services/api_service.dart", "w") as f:
+    f.write(content)

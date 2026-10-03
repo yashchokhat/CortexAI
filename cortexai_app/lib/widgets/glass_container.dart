@@ -54,7 +54,8 @@ class GlassContainer extends StatelessWidget {
       blur: blur,
       borderWidth: borderWidth,
       borderColor: const Color(0x38409CFF), // subtle blue-lit hairline border
-      backgroundColor: customTint ?? const Color(0x180A2540), // subtle blue glass
+      backgroundColor:
+          customTint ?? const Color(0x180A2540), // subtle blue glass
       backgroundGradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
@@ -64,11 +65,7 @@ class GlassContainer extends StatelessWidget {
         ],
       ),
       boxShadow: const [
-        BoxShadow(
-          color: Color(0x14007AFF),
-          blurRadius: 16,
-          spreadRadius: 1,
-        ),
+        BoxShadow(color: Color(0x14007AFF), blurRadius: 16, spreadRadius: 1),
       ],
       child: child,
     );
@@ -97,7 +94,9 @@ class GlassContainer extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: backgroundGradient == null ? (backgroundColor ?? const Color(0x14FFFFFF)) : null,
+              color: backgroundGradient == null
+                  ? (backgroundColor ?? const Color(0x14FFFFFF))
+                  : null,
               gradient: backgroundGradient,
             ),
             child: child,

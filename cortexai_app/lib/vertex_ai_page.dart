@@ -45,7 +45,8 @@ class _VertexAIPageState extends State<VertexAIPage> {
     _messages = [
       VertexChatMessage(
         id: 'msg_welcome',
-        text: 'Hello. I am your Vertex Agent orchestrator. How can I assist with your edge cluster and device commands today?',
+        text:
+            'Hello. I am your Vertex Agent orchestrator. How can I assist with your edge cluster and device commands today?',
         isUser: false,
         timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
         model: 'Vertex Agent',
@@ -100,7 +101,10 @@ class _VertexAIPageState extends State<VertexAIPage> {
 
     try {
       final startTime = DateTime.now();
-      final result = await ApiService.instance.triggerInference('node-esp32-s3-01', text);
+      final result = await ApiService.instance.triggerInference(
+        'node-esp32-s3-01',
+        text,
+      );
       final elapsed = DateTime.now().difference(startTime).inMilliseconds;
 
       final agentMsg = VertexChatMessage(
@@ -129,7 +133,8 @@ class _VertexAIPageState extends State<VertexAIPage> {
           _messages.add(
             VertexChatMessage(
               id: 'agt_${DateTime.now().millisecondsSinceEpoch}',
-              text: 'Acknowledged instruction: "$text". Dispatching deterministic routine across active nodes.',
+              text:
+                  'Acknowledged instruction: "$text". Dispatching deterministic routine across active nodes.',
               isUser: false,
               timestamp: DateTime.now(),
               latencyMs: 14,
@@ -149,7 +154,8 @@ class _VertexAIPageState extends State<VertexAIPage> {
       _messages.add(
         VertexChatMessage(
           id: 'msg_welcome_${DateTime.now().millisecondsSinceEpoch}',
-          text: 'Conversation reset. Vertex Agent is ready for new instructions.',
+          text:
+              'Conversation reset. Vertex Agent is ready for new instructions.',
           isUser: false,
           timestamp: DateTime.now(),
           model: 'Vertex Agent',
@@ -182,7 +188,10 @@ class _VertexAIPageState extends State<VertexAIPage> {
                   child: ListView.builder(
                     controller: _scrollController,
                     physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     itemCount: _messages.length + (_isLoading ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == _messages.length && _isLoading) {
@@ -209,10 +218,7 @@ class _VertexAIPageState extends State<VertexAIPage> {
       decoration: const BoxDecoration(
         color: Color(0xFF000000),
         border: Border(
-          bottom: BorderSide(
-            color: Color(0x1FFFFFFF),
-            width: 0.8,
-          ),
+          bottom: BorderSide(color: Color(0x1FFFFFFF), width: 0.8),
         ),
       ),
       child: Row(
@@ -224,7 +230,11 @@ class _VertexAIPageState extends State<VertexAIPage> {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(CupertinoIcons.chevron_back, color: Colors.white, size: 22),
+                Icon(
+                  CupertinoIcons.chevron_back,
+                  color: Colors.white,
+                  size: 22,
+                ),
                 SizedBox(width: 2),
                 Text(
                   'Back',
@@ -299,13 +309,10 @@ class _VertexAIPageState extends State<VertexAIPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: const Color(0xFF242426),
-              borderRadius: BorderRadius.circular(20).copyWith(
-                bottomRight: const Radius.circular(4),
-              ),
-              border: Border.all(
-                color: const Color(0x22FFFFFF),
-                width: 0.8,
-              ),
+              borderRadius: BorderRadius.circular(
+                20,
+              ).copyWith(bottomRight: const Radius.circular(4)),
+              border: Border.all(color: const Color(0x22FFFFFF), width: 0.8),
             ),
             child: Text(
               msg.text,
@@ -335,10 +342,7 @@ class _VertexAIPageState extends State<VertexAIPage> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: const Color(0xFF141416),
-              border: Border.all(
-                color: const Color(0x33FFFFFF),
-                width: 0.8,
-              ),
+              border: Border.all(color: const Color(0x33FFFFFF), width: 0.8),
             ),
             child: const Center(
               child: Icon(
@@ -353,13 +357,10 @@ class _VertexAIPageState extends State<VertexAIPage> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: const Color(0xFF121214),
-                borderRadius: BorderRadius.circular(18).copyWith(
-                  topLeft: const Radius.circular(4),
-                ),
-                border: Border.all(
-                  color: const Color(0x1FFFFFFF),
-                  width: 0.8,
-                ),
+                borderRadius: BorderRadius.circular(
+                  18,
+                ).copyWith(topLeft: const Radius.circular(4)),
+                border: Border.all(color: const Color(0x1FFFFFFF), width: 0.8),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -398,7 +399,11 @@ class _VertexAIPageState extends State<VertexAIPage> {
                         child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(CupertinoIcons.doc_on_doc, size: 13, color: Color(0x88FFFFFF)),
+                            Icon(
+                              CupertinoIcons.doc_on_doc,
+                              size: 13,
+                              color: Color(0x88FFFFFF),
+                            ),
                             SizedBox(width: 4),
                             Text(
                               'Copy',
@@ -442,10 +447,7 @@ class _VertexAIPageState extends State<VertexAIPage> {
                 SizedBox(width: 10),
                 Text(
                   'Vertex Agent is processing...',
-                  style: TextStyle(
-                    color: Color(0x99FFFFFF),
-                    fontSize: 12.5,
-                  ),
+                  style: TextStyle(color: Color(0x99FFFFFF), fontSize: 12.5),
                 ),
               ],
             ),
@@ -461,22 +463,14 @@ class _VertexAIPageState extends State<VertexAIPage> {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: const BoxDecoration(
         color: Color(0xFF000000),
-        border: Border(
-          top: BorderSide(
-            color: Color(0x1AFFFFFF),
-            width: 0.8,
-          ),
-        ),
+        border: Border(top: BorderSide(color: Color(0x1AFFFFFF), width: 0.8)),
       ),
       child: Container(
         padding: const EdgeInsets.fromLTRB(14, 4, 6, 4),
         decoration: BoxDecoration(
           color: const Color(0xFF141416),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: const Color(0x33FFFFFF),
-            width: 1.0,
-          ),
+          border: Border.all(color: const Color(0x33FFFFFF), width: 1.0),
         ),
         child: Row(
           children: [
@@ -489,10 +483,7 @@ class _VertexAIPageState extends State<VertexAIPage> {
                   color: Color(0x66FFFFFF),
                   fontSize: 14,
                 ),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: Colors.white, fontSize: 14),
                 cursorColor: Colors.white,
                 decoration: null,
                 maxLines: 4,

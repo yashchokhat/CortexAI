@@ -7,14 +7,14 @@ import '../models/esp_claw_device.dart';
 class DeviceDiscoveryService {
   final _controller = StreamController<EspClawDevice>.broadcast();
   Stream<EspClawDevice> get discoveredDevices => _controller.stream;
-  
+
   bool _isDiscovering = false;
   MDnsClient? _mdns;
 
   Future<void> startDiscovery() async {
     if (_isDiscovering) return;
     _isDiscovering = true;
-    
+
     _discoverMdns();
     _discoverSubnet();
   }
@@ -28,16 +28,25 @@ class DeviceDiscoveryService {
   Future<void> _discoverMdns() async {
     _mdns = MDnsClient();
     await _mdns!.start();
-    
+
     final queries = ['_esp-claw._tcp.local', '_http._tcp.local'];
-    
+
     for (final q in queries) {
       if (!_isDiscovering) break;
-      await for (final PtrResourceRecord ptr in _mdns!.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(q))) {
+      await for (final PtrResourceRecord ptr
+          in _mdns!.lookup<PtrResourceRecord>(
+            ResourceRecordQuery.serverPointer(q),
+          )) {
         if (!_isDiscovering) break;
-        await for (final SrvResourceRecord srv in _mdns!.lookup<SrvResourceRecord>(ResourceRecordQuery.service(ptr.domainName))) {
+        await for (final SrvResourceRecord srv
+            in _mdns!.lookup<SrvResourceRecord>(
+              ResourceRecordQuery.service(ptr.domainName),
+            )) {
           if (!_isDiscovering) break;
-          await for (final IPAddressResourceRecord ip in _mdns!.lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(srv.target))) {
+          await for (final IPAddressResourceRecord ip
+              in _mdns!.lookup<IPAddressResourceRecord>(
+                ResourceRecordQuery.addressIPv4(srv.target),
+              )) {
             if (!_isDiscovering) break;
             final ipStr = ip.address.address;
             _checkAndAddDevice(ipStr, srv.port, ptr.domainName);
@@ -49,7 +58,7 @@ class DeviceDiscoveryService {
 
   Future<void> _discoverSubnet() async {
     final List<String> subnetsToScan = ['192.168.43.', '192.168.1.'];
-    
+
     try {
       final info = NetworkInfo();
       final wifiIP = await info.getWifiIP();

@@ -32,7 +32,9 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
       context: context,
       builder: (context) => CupertinoAlertDialog(
         title: const Text('Restart Device?'),
-        content: const Text('This will reboot the ESP-Claw device. Are you sure?'),
+        content: const Text(
+          'This will reboot the Vertex Agent ESP device. Are you sure?',
+        ),
         actions: [
           CupertinoDialogAction(
             child: const Text('Cancel'),
@@ -64,16 +66,76 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
     final chip = device?.chip ?? 'ESP32';
 
     final actions = [
-      _ActionItem('Chat', 'Web IM Interface', CupertinoIcons.chat_bubble_2_fill, const Color(0xFF0A84FF), const EspChatPage()),
-      _ActionItem('Status', 'System Info', CupertinoIcons.device_laptop, const Color(0xFF30D158), const EspStatusPage()),
-      _ActionItem('Features', 'Capabilities', CupertinoIcons.slider_horizontal_3, const Color(0xFFFF9F0A), const EspCapabilitiesPage()),
-      _ActionItem('Files', 'Storage', CupertinoIcons.folder_fill, const Color(0xFF5E5CE6), const EspFilesPage()),
-      _ActionItem('Lua Scripts', 'Code Modules', Icons.code_rounded, const Color(0xFFFF375F), const EspLuaPage()),
-      _ActionItem('Skills', 'Agent Skills', CupertinoIcons.sparkles, const Color(0xFFBF5AF2), const EspSkillsPage()),
-      _ActionItem('Memory', 'Long-term Storage', Icons.memory_rounded, const Color(0xFF64D2FF), const EspMemoryPage()),
-      _ActionItem('MCP', 'Connections', CupertinoIcons.link, const Color(0xFFFFD60A), const EspMcpPage()),
-      _ActionItem('Cron Jobs', 'Scheduler', CupertinoIcons.timer, const Color(0xFFFF9F0A), const EspSchedulerPage()),
-      _ActionItem('Settings', 'Configuration', CupertinoIcons.settings, const Color(0xFF8E8E93), const EspConfigPage()),
+      _ActionItem(
+        'Chat',
+        'Web IM Interface',
+        CupertinoIcons.chat_bubble_2_fill,
+        const Color(0xFF0A84FF),
+        const EspChatPage(),
+      ),
+      _ActionItem(
+        'Status',
+        'System Info',
+        CupertinoIcons.device_laptop,
+        const Color(0xFF30D158),
+        const EspStatusPage(),
+      ),
+      _ActionItem(
+        'Features',
+        'Capabilities',
+        CupertinoIcons.slider_horizontal_3,
+        const Color(0xFFFF9F0A),
+        const EspCapabilitiesPage(),
+      ),
+      _ActionItem(
+        'Files',
+        'Storage',
+        CupertinoIcons.folder_fill,
+        const Color(0xFF5E5CE6),
+        const EspFilesPage(),
+      ),
+      _ActionItem(
+        'Lua Scripts',
+        'Code Modules',
+        Icons.code_rounded,
+        const Color(0xFFFF375F),
+        const EspLuaPage(),
+      ),
+      _ActionItem(
+        'Skills',
+        'Agent Skills',
+        CupertinoIcons.sparkles,
+        const Color(0xFFBF5AF2),
+        const EspSkillsPage(),
+      ),
+      _ActionItem(
+        'Memory',
+        'Long-term Storage',
+        Icons.memory_rounded,
+        const Color(0xFF64D2FF),
+        const EspMemoryPage(),
+      ),
+      _ActionItem(
+        'MCP',
+        'Connections',
+        CupertinoIcons.link,
+        const Color(0xFFFFD60A),
+        const EspMcpPage(),
+      ),
+      _ActionItem(
+        'Cron Jobs',
+        'Scheduler',
+        CupertinoIcons.timer,
+        const Color(0xFFFF9F0A),
+        const EspSchedulerPage(),
+      ),
+      _ActionItem(
+        'Settings',
+        'Configuration',
+        CupertinoIcons.settings,
+        const Color(0xFF8E8E93),
+        const EspConfigPage(),
+      ),
     ];
 
     return CupertinoTheme(
@@ -94,8 +156,13 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
             onPressed: _disconnect,
           ),
           title: const Text(
-            'ESP-Claw Dashboard',
-            style: TextStyle(color: Colors.white, fontSize: 17, fontWeight: FontWeight.w600, fontFamily: '.SF Pro Text'),
+            'Vertex Agent ESP Dashboard',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              fontFamily: '.SF Pro Text',
+            ),
           ),
           centerTitle: true,
         ),
@@ -104,12 +171,16 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
             _buildHeader(name, ip, chip),
             Expanded(
               child: GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
-                  childAspectRatio: 1.15, // Wider aspect ratio prevents text overlap
+                  childAspectRatio:
+                      1.15, // Wider aspect ratio prevents text overlap
                 ),
                 itemCount: actions.length,
                 itemBuilder: (context, index) {
@@ -121,7 +192,12 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
             SafeArea(
               top: false,
               child: Padding(
-                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8, top: 8),
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 16,
+                  bottom: 8,
+                  top: 8,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -130,7 +206,14 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
                         color: const Color(0xFF1C1C1E),
                         borderRadius: BorderRadius.circular(16),
                         onPressed: _disconnect,
-                        child: const Text('Disconnect', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
+                        child: const Text(
+                          'Disconnect',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -140,7 +223,14 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
                         color: const Color(0x33FF3B30),
                         borderRadius: BorderRadius.circular(16),
                         onPressed: _restartDevice,
-                        child: const Text('Restart ESP', style: TextStyle(color: CupertinoColors.destructiveRed, fontSize: 16, fontWeight: FontWeight.w500)),
+                        child: const Text(
+                          'Restart ESP',
+                          style: TextStyle(
+                            color: CupertinoColors.destructiveRed,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -160,12 +250,7 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
         color: const Color(0xFF141415),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: const Color(0x28FFFFFF)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x08007AFF),
-            blurRadius: 20,
-          ),
-        ],
+        boxShadow: const [BoxShadow(color: Color(0x08007AFF), blurRadius: 20)],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(24),
@@ -195,12 +280,21 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold, fontFamily: '.SF Pro Display'),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: '.SF Pro Display',
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(
                       '$chip • $ip',
-                      style: const TextStyle(color: Color(0x88FFFFFF), fontSize: 14, fontFamily: '.SF Pro Text'),
+                      style: const TextStyle(
+                        color: Color(0x88FFFFFF),
+                        fontSize: 14,
+                        fontFamily: '.SF Pro Text',
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
@@ -215,60 +309,69 @@ class _EspDashboardPageState extends State<EspDashboardPage> {
 
   Widget _buildActionCard(_ActionItem item, int index) {
     return GestureDetector(
-      onTap: () {
-        if (item.page != null) {
-          _navigateTo(item.page!);
-        }
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF141415),
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: const Color(0x11FFFFFF)),
-          boxShadow: [
-            BoxShadow(
-              color: item.color.withOpacity(0.04),
-              blurRadius: 15,
-            )
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(14.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: item.color.withOpacity(0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(item.icon, color: item.color, size: 24),
-              ),
-              Column(
+          onTap: () {
+            if (item.page != null) {
+              _navigateTo(item.page!);
+            }
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color(0xFF141415),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: const Color(0x11FFFFFF)),
+              boxShadow: [
+                BoxShadow(color: item.color.withOpacity(0.04), blurRadius: 15),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(14.0),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    item.title,
-                    style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600, fontFamily: '.SF Pro Text'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: item.color.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(item.icon, color: item.color, size: 24),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    item.subtitle,
-                    style: const TextStyle(color: Color(0x66FFFFFF), fontSize: 11, fontFamily: '.SF Pro Text'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: '.SF Pro Text',
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        item.subtitle,
+                        style: const TextStyle(
+                          color: Color(0x66FFFFFF),
+                          fontSize: 11,
+                          fontFamily: '.SF Pro Text',
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    ).animate().fadeIn(duration: 350.ms, delay: (index * 40).ms).slideY(begin: 0.1, curve: Curves.easeOutCubic);
+        )
+        .animate()
+        .fadeIn(duration: 350.ms, delay: (index * 40).ms)
+        .slideY(begin: 0.1, curve: Curves.easeOutCubic);
   }
 }
 
